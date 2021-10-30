@@ -2,6 +2,51 @@
 
 import time
 
+def int_extraction(question, bound1, bound2):
+	while True:
+		try:
+			input = int(input(question))
+		except ValueError:
+			print("Wrong input. Please try again.")
+			continue
+		if (input < bound1 or input > bound2):
+			print("Value out of bounds. Please try again")
+			continue
+		else:
+			return input
+			break
+
+def boolean_extraction(question, bound1, bound2):
+	input = int_extraction(question, bound1, bound2)
+	if (input == 1):
+		return False
+	else:
+		return True
+
+def blocposition_extraction(board_size, bloc_number):
+	coordinates_list = list()
+	x_pos = 0
+	y_pos = 0
+	for i in range(bloc_number):
+		while not int(x_pos) in range (0, board_size):
+			x_pos = input("Enter the x coordinate of your bloc.")
+		while not int(y_pos) in range (0, board_size):
+			y_pos = input ("Enter the y coordinate of your bloc.")
+		coordinate_tuple = (x_pos, y_pos)
+		coordinates_list.append(coordinate_tuple)
+	return coordinates_list
+
+def input():
+	n = int_extraction("Please enter the size of the board [3, 10]", 3, 10)
+	b = int_extraction("Please enter the number of blocs [2, 2*sizeofboard]", 3, 2*n)
+	coordinates_list = blocposition_extraction(n-1, b)
+	d1 = int_extraction("Please enter the maximum depth of the adverserial search d1 [1, sizeofboard]", 1, n-1)
+	d2 = int_extraction("Please enter the maximum depth of the adverserial search d2 [1, sizeofboard]", 1, n-1)
+	t = int_extraction("Please enter the maximum allowed time for the program to return a move")
+	a = boolean_extraction("To force the use of minimax, enter '1'. To force the use of alphabeta, enter '2'", 1, 2)
+	play_mode = int_extraction("Please enter the game mode: 1. H-H, 2. H-AI, 3. AI-H, 4. AI-AI", 1, 4)
+	return n, b, coordinates_list, d1, d2, t, a, play_mode
+
 class Game:
 	MINIMAX = 0
 	ALPHABETA = 1
@@ -11,7 +56,7 @@ class Game:
 	def __init__(self, recommend = True):
 		self.initialize_game()
 		self.recommend = recommend
-		
+	
 	def initialize_game(self):
 		self.current_state = [['.','.','.'],
 							  ['.','.','.'],
