@@ -39,10 +39,11 @@ def blocposition_extraction(board_size, bloc_number):
 def input():
 	n = int_extraction("Please enter the size of the board [3, 10]", 3, 10)
 	b = int_extraction("Please enter the number of blocs [2, 2*sizeofboard]", 3, 2*n)
+	s = int_extraction("Please enter the winning line-up size [3, sizeofboard]", 3, n)
 	coordinates_list = blocposition_extraction(n-1, b)
 	d1 = int_extraction("Please enter the maximum depth of the adverserial search d1 [1, sizeofboard]", 1, n-1)
 	d2 = int_extraction("Please enter the maximum depth of the adverserial search d2 [1, sizeofboard]", 1, n-1)
-	t = int_extraction("Please enter the maximum allowed time for the program to return a move")
+	t = int_extraction("Please enter the maximum allowed time for the program to return a move", 1, float('inf'))
 	a = boolean_extraction("To force the use of minimax, enter '1'. To force the use of alphabeta, enter '2'", 1, 2)
 	play_mode = int_extraction("Please enter the game mode: 1. H-H, 2. H-AI, 3. AI-H, 4. AI-AI", 1, 4)
 	return n, b, coordinates_list, d1, d2, t, a, play_mode
