@@ -1,24 +1,25 @@
 # based on code from https://stackabuse.com/minimax-and-alpha-beta-pruning-in-python
 
 import time
+import sys
 
 def int_extraction(question, bound1, bound2):
 	while True:
 		try:
-			input = int(input(question))
+			print(question)
+			user_input = int(input())
 		except ValueError:
 			print("Wrong input. Please try again.")
 			continue
-		if (input < bound1 or input > bound2):
+		if user_input < bound1 or user_input > bound2:
 			print("Value out of bounds. Please try again")
 			continue
 		else:
-			return input
-			break
+			return user_input
 
 def boolean_extraction(question, bound1, bound2):
-	input = int_extraction(question, bound1, bound2)
-	if (input == 1):
+	user_input = int_extraction(question, bound1, bound2)
+	if (user_input == 1):
 		return False
 	else:
 		return True
@@ -29,9 +30,11 @@ def blocposition_extraction(board_size, bloc_number):
 	y_pos = 0
 	for i in range(bloc_number):
 		while not int(x_pos) in range (0, board_size):
-			x_pos = input("Enter the x coordinate of your bloc.")
+			print("Enter the x coordinate of your bloc.")
+			x_pos = input()
 		while not int(y_pos) in range (0, board_size):
-			y_pos = input ("Enter the y coordinate of your bloc.")
+			print("Enter the y coordinate of your bloc.")
+			y_pos = input ()
 		coordinate_tuple = (x_pos, y_pos)
 		coordinates_list.append(coordinate_tuple)
 	return coordinates_list
@@ -53,28 +56,37 @@ class Game:
 	ALPHABETA = 1
 	HUMAN = 2
 	AI = 3
-	
-	def __init__(self, recommend = True):
+	n = 0
+	b = 0;
+	s = 0
+	coordinates_list = list()
+	d1 = 0
+	d2 = 0
+	t = 0
+	a = True
+	play_mode = 0
+
+
+	def __init__(self, n, b, s, coordinates_list, d1, d2, t, a, play_mode, recommend = True):
+		self.n, self.b, self.s, self.coordinates_list, self.d1, self.d2, self.t, self.a, self.play_mode = n, b, s, coordinates_list, d1, d2, t, a, play_mode
 		self.initialize_game()
 		self.recommend = recommend
 	
 	def initialize_game(self):
-		self.current_state = [['.','.','.'],
-							  ['.','.','.'],
-							  ['.','.','.']]
+		self.current_state = [['.'for i in range (self.n)] for j in range(self.n)]
 		# Player X always plays first
 		self.player_turn = 'X'
 
 	def draw_board(self):
 		print()
-		for y in range(0, 3):
-			for x in range(0, 3):
+		for y in range(0, self.n):
+			for x in range(0, self.n):
 				print(F'{self.current_state[x][y]}', end="")
 			print()
 		print()
 		
 	def is_valid(self, px, py):
-		if px < 0 or px > 2 or py < 0 or py > 2:
+		if px < 0 or px > self.n-1 or py < 0 or py > self.n-1:
 			return False
 		elif self.current_state[px][py] != '.':
 			return False
@@ -83,17 +95,35 @@ class Game:
 
 	def is_end(self):
 		# Vertical win
-		for i in range(0, 3):
-			if (self.current_state[0][i] != '.' and
-				self.current_state[0][i] == self.current_state[1][i] and
-				self.current_state[1][i] == self.current_state[2][i]):
-				return self.current_state[0][i]
+		vertical_counter = 0
+		for i in range(0, self.n):
+			for j in range (1, self.n):
+				if (self.current_state[i][j-1] != '.' and self.current_state[i][j-1] == self.current_state[i][j]):
+					vertical_counter += 1
+					if vertical_counter == self.s-1:
+						return self.current_state[i][j]
+					else:
+						continue
+				else:
+					vertical_counter = 0
+					continue
+			vertical_counter = 0 # It has to check every column completely for a vertical win before moving on to check for a horizontal win
+
 		# Horizontal win
-		for i in range(0, 3):
-			if (self.current_state[i] == ['X', 'X', 'X']):
-				return 'X'
-			elif (self.current_state[i] == ['O', 'O', 'O']):
-				return 'O'
+		horizontal_counter = 0
+		for i in range(0, self.n):
+			for j in range (1, self.n):
+				if (self.current_state[j-1][i] != '.' and self.current_state[j-1][i] == self.current_state[j][i]):
+					horizontal_counter += 1
+					if horizontal_counter == self.s-1:
+						return self.current_state[j][i]
+					else:
+						continue
+				else:
+					horizontal_counter = 0
+					continue
+			horizontal_counter = 0
+
 		# Main diagonal win
 		if (self.current_state[0][0] != '.' and
 			self.current_state[0][0] == self.current_state[1][1] and
@@ -105,8 +135,8 @@ class Game:
 			self.current_state[0][2] == self.current_state[2][0]):
 			return self.current_state[0][2]
 		# Is whole board full?
-		for i in range(0, 3):
-			for j in range(0, 3):
+		for i in range(0, self.n):
+			for j in range(0, self.n):
 				# There's an empty field, we continue the game
 				if (self.current_state[i][j] == '.'):
 					return None
@@ -266,9 +296,11 @@ class Game:
 			self.switch_player()
 
 def main():
-	g = Game(recommend=True)
-	g.play(algo=Game.ALPHABETA,player_x=Game.AI,player_o=Game.AI)
-	g.play(algo=Game.MINIMAX,player_x=Game.AI,player_o=Game.HUMAN)
+	# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input()
+	g = Game(4, 0, 4, list(), 0, 0, 0, True, 1,recommend=True)
+	g.draw_board()
+	# g.play(algo=Game.ALPHABETA,player_x=Game.AI,player_o=Game.AI)
+	# g.play(algo=Game.MINIMAX,player_x=Game.AI,player_o=Game.HUMAN)
 
 if __name__ == "__main__":
 	main()
