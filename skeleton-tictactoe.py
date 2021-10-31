@@ -39,7 +39,7 @@ def blocposition_extraction(board_size, bloc_number):
 		coordinates_list.append(coordinate_tuple)
 	return coordinates_list
 
-def input():
+def input_extraction():
 	n = int_extraction("Please enter the size of the board [3, 10]", 3, 10)
 	b = int_extraction("Please enter the number of blocs [2, 2*sizeofboard]", 3, 2*n)
 	s = int_extraction("Please enter the winning line-up size [3, sizeofboard]", 3, n)
@@ -296,7 +296,7 @@ class Game:
 			self.switch_player()
 
 def main():
-	# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input()
+	# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
 	g = Game(4, 0, 4, list(), 0, 0, 0, True, 1,recommend=True)
 	g.draw_board()
 	# g.play(algo=Game.ALPHABETA,player_x=Game.AI,player_o=Game.AI)
