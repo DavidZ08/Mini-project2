@@ -31,10 +31,11 @@ def blocposition_extraction(board_size, bloc_number):
 	for i in range(bloc_number):
 		while not int(x_pos) in range (0, board_size):
 			print("Enter the x coordinate of your bloc.")
-			x_pos = input()
+			x_pos_string = input()
+			x_pos = coordinate_extraction(x_pos_string)
 		while not int(y_pos) in range (0, board_size):
 			print("Enter the y coordinate of your bloc.")
-			y_pos = input ()
+			y_pos = input()
 		coordinate_tuple = (x_pos, y_pos)
 		coordinates_list.append(coordinate_tuple)
 	return coordinates_list
@@ -51,6 +52,22 @@ def input_extraction():
 	play_mode = int_extraction("Please enter the game mode: 1. H-H, 2. H-AI, 3. AI-H, 4. AI-AI", 1, 4)
 	return n, b, coordinates_list, d1, d2, t, a, play_mode
 
+def coordinate_extraction(str):
+	alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'H' : 6, 'I' : 7, 'J' : 8, 'K' : 9}
+	return alphabet_coordinates[str]
+
+def move_extraction_human(board_size):
+	#TODO: finish this method for human players, gives them only one chance to re-enter their move. In case of another failure, makes player lose the game.
+	print("Enter the x coordinate of your move.")
+	x_pos_string = input()
+	x_pos = coordinate_extraction(x_pos_string)
+	if (x_pos > board_size or x_pos < 0):
+		print("Enter the y coordinate of your move.")
+	y_pos = input()
+	coordinate_tuple = (x_pos, y_pos)
+	return coordinate_tuple
+
+#TODO: Finish method for AI players, gives them 0 chances.
 class Game:
 	MINIMAX = 0
 	ALPHABETA = 1
@@ -74,8 +91,8 @@ class Game:
 	
 	def initialize_game(self):
 		self.current_state = [['.'for i in range (self.n)] for j in range(self.n)]
-		# Player X always plays first
-		self.player_turn = 'X'
+		# Player ◦ always plays first
+		self.player_turn = '◦'
 
 	def draw_board(self):
 		print()
@@ -134,6 +151,7 @@ class Game:
 			self.current_state[0][2] == self.current_state[1][1] and
 			self.current_state[0][2] == self.current_state[2][0]):
 			return self.current_state[0][2]
+			
 		# Is whole board full?
 		for i in range(0, self.n):
 			for j in range(0, self.n):
@@ -147,10 +165,10 @@ class Game:
 		self.result = self.is_end()
 		# Printing the appropriate message if the game has ended
 		if self.result != None:
-			if self.result == 'X':
-				print('The winner is X!')
-			elif self.result == 'O':
-				print('The winner is O!')
+			if self.result == '◦':
+				print('The winner is ◦!')
+			elif self.result == '•':
+				print('The winner is •!')
 			elif self.result == '.':
 				print("It's a tie!")
 			self.initialize_game()
@@ -167,18 +185,18 @@ class Game:
 				print('The move is not valid! Try again.')
 
 	def switch_player(self):
-		if self.player_turn == 'X':
-			self.player_turn = 'O'
-		elif self.player_turn == 'O':
-			self.player_turn = 'X'
+		if self.player_turn == '◦':
+			self.player_turn = '•'
+		elif self.player_turn == '•':
+			self.player_turn = '◦'
 		return self.player_turn
 
 	def minimax(self, max=False):
-		# Minimizing for 'X' and maximizing for 'O'
+		# Minimizing for '◦' and maximizing for '•'
 		# Possible values are:
-		# -1 - win for 'X'
+		# -1 - win for '◦'
 		# 0  - a tie
-		# 1  - loss for 'X'
+		# 1  - loss for '◦'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
 		value = 2
 		if max:
@@ -186,24 +204,24 @@ class Game:
 		x = None
 		y = None
 		result = self.is_end()
-		if result == 'X':
+		if result == '◦':
 			return (-1, x, y)
-		elif result == 'O':
+		elif result == '•':
 			return (1, x, y)
 		elif result == '.':
 			return (0, x, y)
-		for i in range(0, 3):
-			for j in range(0, 3):
+		for i in range(0, self.n):
+			for j in range(0, self.n):
 				if self.current_state[i][j] == '.':
 					if max:
-						self.current_state[i][j] = 'O'
+						self.current_state[i][j] = '•'
 						(v, _, _) = self.minimax(max=False)
 						if v > value:
 							value = v
 							x = i
 							y = j
 					else:
-						self.current_state[i][j] = 'X'
+						self.current_state[i][j] = '◦'
 						(v, _, _) = self.minimax(max=True)
 						if v < value:
 							value = v
@@ -213,11 +231,11 @@ class Game:
 		return (value, x, y)
 
 	def alphabeta(self, alpha=-2, beta=2, max=False):
-		# Minimizing for 'X' and maximizing for 'O'
+		# Minimizing for '◦' and maximizing for '•'
 		# Possible values are:
-		# -1 - win for 'X'
+		# -1 - win for '◦'
 		# 0  - a tie
-		# 1  - loss for 'X'
+		# 1  - loss for '◦'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
 		value = 2
 		if max:
@@ -225,24 +243,24 @@ class Game:
 		x = None
 		y = None
 		result = self.is_end()
-		if result == 'X':
+		if result == '◦':
 			return (-1, x, y)
-		elif result == 'O':
+		elif result == '•':
 			return (1, x, y)
 		elif result == '.':
 			return (0, x, y)
-		for i in range(0, 3):
-			for j in range(0, 3):
+		for i in range(0, self.n):
+			for j in range(0, self.n):
 				if self.current_state[i][j] == '.':
 					if max:
-						self.current_state[i][j] = 'O'
+						self.current_state[i][j] = '•'
 						(v, _, _) = self.alphabeta(alpha, beta, max=False)
 						if v > value:
 							value = v
 							x = i
 							y = j
 					else:
-						self.current_state[i][j] = 'X'
+						self.current_state[i][j] = '◦'
 						(v, _, _) = self.alphabeta(alpha, beta, max=True)
 						if v < value:
 							value = v
@@ -274,22 +292,22 @@ class Game:
 				return
 			start = time.time()
 			if algo == self.MINIMAX:
-				if self.player_turn == 'X':
+				if self.player_turn == '◦':
 					(_, x, y) = self.minimax(max=False)
 				else:
 					(_, x, y) = self.minimax(max=True)
 			else: # algo == self.ALPHABETA
-				if self.player_turn == 'X':
+				if self.player_turn == '◦':
 					(m, x, y) = self.alphabeta(max=False)
 				else:
 					(m, x, y) = self.alphabeta(max=True)
 			end = time.time()
-			if (self.player_turn == 'X' and player_x == self.HUMAN) or (self.player_turn == 'O' and player_o == self.HUMAN):
+			if (self.player_turn == '◦' and player_x == self.HUMAN) or (self.player_turn == '•' and player_o == self.HUMAN):
 					if self.recommend:
 						print(F'Evaluation time: {round(end - start, 7)}s')
 						print(F'Recommended move: x = {x}, y = {y}')
 					(x,y) = self.input_move()
-			if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
+			if (self.player_turn == '◦' and player_x == self.AI) or (self.player_turn == '•' and player_o == self.AI):
 						print(F'Evaluation time: {round(end - start, 7)}s')
 						print(F'Player {self.player_turn} under AI control plays: x = {x}, y = {y}')
 			self.current_state[x][y] = self.player_turn
