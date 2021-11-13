@@ -93,6 +93,8 @@ class Game:
 	
 	def initialize_game(self):
 		self.current_state = [['.'for i in range (self.n)] for j in range(self.n)]
+		for i in self.coordinates_list:
+			self.current_state[i[0]][i[1]] = 'b'
 		# Player ◦ always plays first
 		self.player_turn = '◦'
 
@@ -388,7 +390,7 @@ class Game:
 
 		for i in range(0, self.n):										#Loop that will go through each position of the current state and perform the heuristic.
 			for j in range(0, self.n):
-				if (self.current_state[i][j] == 'box'):					#Each box is worth 0 points.
+				if (self.current_state[i][j] == 'b'):					#Each box is worth 0 points.
 					max_matrix[i, j] = 0
 					min_matrix[i, j] = 0
 				elif (self.current_state[i][j] == '.'):					#Each empty position is worth 1 for the max player and -1 for the min player.
@@ -418,10 +420,10 @@ class Game:
 		
 #Class used to test my heurisic while we build the functional game class.		
 class Test_case:
-	def __init__(self, n = 5, current_state = [['box', '.', '•', '.', '.'],
-				 							   ['.', '•', '◦', 'box', '.'],
-				 							   ['.', 'box', '◦', '.', '.'],
-				 							   ['.', '.', '◦', 'box', '.'],
+	def __init__(self, n = 5, current_state = [['b', '.', '•', '.', '.'],
+				 							   ['.', '•', '◦', 'b', '.'],
+				 							   ['.', 'b', '◦', '.', '.'],
+				 							   ['.', '.', '◦', 'b', '.'],
 				 							   ['.', '.', '•', '.', '.']]):
 		self.n = n
 		self.current_state = current_state
@@ -438,7 +440,7 @@ class Test_case:
 		
 		for i in range(0, self.n):										#Loop that will go through each position of the current state and perform the heuristic.
 			for j in range(0, self.n):
-				if (self.current_state[i][j] == 'box'):					#Each box is worth 0 points.
+				if (self.current_state[i][j] == 'b'):					#Each box is worth 0 points.
 					max_matrix[i, j] = 0
 					min_matrix[i, j] = 0
 				elif (self.current_state[i][j] == '.'):					#Each empty position is worth 1 for the max player and -1 for the min player.
