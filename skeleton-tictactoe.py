@@ -316,6 +316,7 @@ class Game:
 
 	#Max player will always be the white pieces since that player always goes first.
 	def slow_heuristic(self):
+		start = time.time()
 		max_matrix = np.zeros((self.n,self.n))							#Matrix of zeros used to evaluate the max player's score for each of its pieces.
 		min_matrix = np.zeros((self.n,self.n))							#Matrix of zeros used to evaluate the min player's score for each of its pieces.
 		white_matrix = np.zeros((self.n,self.n), dtype=bool)			#Boolean matrix to indentify the white pieces.
@@ -355,6 +356,8 @@ class Game:
 				min_score_matrix[i, j] = np.sum(min_region) - min_matrix[i, j]
 		max_final_score_matrix = np.where(white_matrix, max_score_matrix, 0)
 		min_final_score_matrix = np.where(black_matrix, min_score_matrix, 0)
+		end = time.time()
+		print(end - start)
 		return np.sum(max_final_score_matrix) + np.sum(min_final_score_matrix)		#Returns the sum of the all the scores in both max and min score matrices.
 		
 #Class used to test my heurisic while we build the functional game class.		
@@ -367,6 +370,7 @@ class Test_case:
 		self.n = n
 		self.current_state = current_state
 	def slow_heuristic(self):
+		start = time.time()
 		max_matrix = np.zeros((self.n,self.n))							#Matrix of zeros used to evaluate the max player's score for each of its pieces.
 		min_matrix = np.zeros((self.n,self.n))							#Matrix of zeros used to evaluate the min player's score for each of its pieces.
 		white_matrix = np.zeros((self.n,self.n), dtype=bool)			#Boolean matrix to indentify the white pieces.
@@ -396,14 +400,14 @@ class Test_case:
 					max_matrix[i, j] = -2
 					min_matrix[i ,j] = -2
 					black_matrix[i, j] = True
-		print("MAX_MATRIX")
-		print(max_matrix)
-		print("WHITE_MATRIX")
-		print(white_matrix)
-		print("MIN_MATRIX")
-		print(min_matrix)
-		print("BLACK_MATRIX")
-		print(black_matrix)
+		# print("MAX_MATRIX")
+		# print(max_matrix)
+		# print("WHITE_MATRIX")
+		# print(white_matrix)
+		# print("MIN_MATRIX")
+		# print(min_matrix)
+		# print("BLACK_MATRIX")
+		# print(black_matrix)
 		for i in range(0, self.n):										#Loop that will set the values of the pieces to the sum of the adjacent values.
 			for j in range(0, self.n):
 				max_region = max_matrix[max(0, i-1) : i+2,
@@ -412,16 +416,18 @@ class Test_case:
 				min_region = min_matrix[max(0, i-1) : i+2,
                     					max(0, j-1) : j+2]
 				min_score_matrix[i, j] = np.sum(min_region) - min_matrix[i, j]
-		print("MAX_SCORE_MATRIX")
-		print(max_score_matrix)
-		print("MIN_SCORE_MATRIX")
-		print(min_score_matrix)
+		# print("MAX_SCORE_MATRIX")
+		# print(max_score_matrix)
+		# print("MIN_SCORE_MATRIX")
+		# print(min_score_matrix)
 		max_final_score_matrix = np.where(white_matrix, max_score_matrix, 0)	
 		min_final_score_matrix = np.where(black_matrix, min_score_matrix, 0)
-		print("MAX_FINAL_SCORE_MATRIX")
-		print(max_final_score_matrix)
-		print("MIN_FINAL_SCORE_MATRIX")
-		print(min_final_score_matrix)
+		# print("MAX_FINAL_SCORE_MATRIX")
+		# print(max_final_score_matrix)
+		# print("MIN_FINAL_SCORE_MATRIX")
+		# print(min_final_score_matrix)
+		end = time.time()
+		print(end - start)
 		return np.sum(max_final_score_matrix) + np.sum(min_final_score_matrix)		#Returns the sum of the all the scores in both max and min score matrices.
 		
 		
