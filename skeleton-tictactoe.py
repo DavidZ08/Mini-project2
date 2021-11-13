@@ -145,45 +145,73 @@ class Game:
 			horizontal_counter = 0
 
 		diagonal_counter = 0
-		#First diagonal from top left to bottom right
-		for i in range(1, self.n):
+		#First set of diagonals from top left to bottom right
+		for i in range(1, self.n):												#check for a win on the main diagonal
 			if (self.current_state[i-1][i-1] != '.' and self.current_state[i-1][i-1] == self.current_state[i][i]):
 				diagonal_counter += 1
 				if diagonal_counter == self.s-1:
 					return self.current_state[i][i]
 			else:
 				diagonal_counter = 0
-		diagonal_counter = 0
-		if (self.n > self.s):
+		if (self.n > self.s):													#check for a win on the remaining diagonals
 			diagonal1_counter = 0
 			diagonal2_counter = 0
 			for i in range(1, self.n-self.s):
-				for j in range (i, self.n):
-					if (self.current_state[i-1][j-1] != '.' and self.current_state[i-1][j-1] == self.current_state[i][j]):
+				for j in range (1, self.n-i):
+					if (self.current_state[j-1][i+j-1] != '.' and self.current_state[j-1][i+j-1] == self.current_state[j][i+j]):
 						diagonal1_counter += 1
 					
 						if diagonal_counter == self.s-1:
-							return self.current_state[i][j]
+							return self.current_state[j][i+j]
 					else:
 						diagonal2_counter = 0
 					
-					if (self.current_state[j-1][i-1] != '.' and self.current_state[j-1][i-1] == self.current_state[j][i]):
+					if (self.current_state[i+j-1][j-1] != '.' and self.current_state[i+j-1][j-1] == self.current_state[i+j][j]):
 						diagonal2_counter += 1
 					
 						if diagonal_counter == self.s-1:
-							return self.current_state[i][j]
+							return self.current_state[i][i+j]
 					else:
 						diagonal2_counter = 0
 				diagonal1_counter = 0
 				diagonal2_counter = 0
 
-			
-
-		# Second diagonal win (/)
-		if (self.current_state[0][2] != '.' and
-			self.current_state[0][2] == self.current_state[1][1] and
-			self.current_state[0][2] == self.current_state[2][0]):
-			return self.current_state[0][2]
+		# Second set of diagonals from top right to bottom left
+		#Flip the matrix
+		diagonal_counter = 0
+		current_state_flipped = []
+		for i in range(len(self.current_state)):
+			current_state_flipped.append(self.current_state[i][::-1])
+		
+		for i in range(1, self.n):											#check for a win on the main diagonal
+			if (current_state_flipped[i-1][i-1] != '.' and current_state_flipped[i-1][i-1] == current_state_flipped[i][i]):
+				diagonal_counter += 1
+				if diagonal_counter == self.s-1:
+					return current_state_flipped[i][i]
+			else:
+				diagonal_counter = 0
+		if (self.n > self.s):												#check for a win on the remaining diagonals
+			diagonal1_counter = 0
+			diagonal2_counter = 0
+			for i in range(1, self.n-self.s):
+				for j in range (1, self.n-i):
+					if (current_state_flipped[j-1][i+j-1] != '.' and current_state_flipped[j-1][i+j-1] == current_state_flipped[j][i+j]):
+						diagonal1_counter += 1
+					
+						if diagonal_counter == self.s-1:
+							return current_state_flipped[j][i+j]
+					else:
+						diagonal2_counter = 0
+					
+					if (current_state_flipped[i+j-1][j-1] != '.' and current_state_flipped[i+j-1][j-1] == current_state_flipped[i+j][j]):
+						diagonal2_counter += 1
+					
+						if diagonal_counter == self.s-1:
+							return current_state_flipped[i][i+j]
+					else:
+						diagonal2_counter = 0
+				diagonal1_counter = 0
+				diagonal2_counter = 0
 			
 		# Is whole board full?
 		for i in range(0, self.n):
