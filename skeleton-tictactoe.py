@@ -4,7 +4,8 @@ import time
 import sys
 import numpy as np
 
-def int_extraction(question, bound1, bound2):
+
+def int_extraction(question, bound1, bound2):							#Method that will be used to prompr the user for an integer and check that it is within bounds.
 	while True:
 		try:
 			print(question)
@@ -18,14 +19,14 @@ def int_extraction(question, bound1, bound2):
 		else:
 			return user_input
 
-def boolean_extraction(question, bound1, bound2):
+def boolean_extraction(question, bound1, bound2):						#Method that will prompt the user for a boolean.
 	user_input = int_extraction(question, bound1, bound2)
 	if (user_input == 1):
 		return False
 	else:
 		return True
 
-def blocposition_extraction(board_size, bloc_number):
+def blocposition_extraction(board_size, bloc_number):					#Method that will prompt the user for the positions of the blocs.
 	coordinates_list = list()
 	x_pos = 0
 	y_pos = 0
@@ -41,7 +42,7 @@ def blocposition_extraction(board_size, bloc_number):
 		coordinates_list.append(coordinate_tuple)
 	return coordinates_list
 
-def input_extraction():
+def input_extraction():																#Method that will be used to prompt the user for the various parameters needed to initiate a game.
 	n = int_extraction("Please enter the size of the board [3, 10]", 3, 10)
 	b = int_extraction("Please enter the number of blocs [2, 2*sizeofboard]", 3, 2*n)
 	s = int_extraction("Please enter the winning line-up size [3, sizeofboard]", 3, n)
@@ -51,13 +52,13 @@ def input_extraction():
 	t = int_extraction("Please enter the maximum allowed time for the program to return a move", 1, float('inf'))
 	a = boolean_extraction("To force the use of minimax, enter '1'. To force the use of alphabeta, enter '2'", 1, 2)
 	play_mode = int_extraction("Please enter the game mode: 1. H-H, 2. H-AI, 3. AI-H, 4. AI-AI", 1, 4)
-	return n, b, coordinates_list, d1, d2, t, a, play_mode
+	return n, b, s, coordinates_list, d1, d2, t, a, play_mode
 
-def coordinate_extraction(str):
+def coordinate_extraction(str):														#Method that will be used to convert aphabetical coordinates to numerical ones.
 	alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'H' : 6, 'I' : 7, 'J' : 8, 'K' : 9}
 	return alphabet_coordinates[str]
 
-def move_extraction_human(board_size):
+def move_extraction_human(board_size):												#Method that will be used to prompt the user for coordinates.
 	#TODO: finish this method for human players, gives them only one chance to re-enter their move. In case of another failure, makes player lose the game.
 	print("Enter the x coordinate of your move.")
 	x_pos_string = input()
@@ -104,7 +105,7 @@ class Game:
 		print()
 		
 	def is_valid(self, px, py):
-		if px < 0 or px > self.n-1 or py < 0 or py > self.n-1:
+		if px < 0 or px > self.n-1 or py < 0 or py > self.n-1:		
 			return False
 		elif self.current_state[px][py] != '.':
 			return False
@@ -112,29 +113,30 @@ class Game:
 			return True
 
 	def is_end(self):
-		# Vertical win
+		
+		#Vertical win
 		vertical_counter = 0
 		for i in range(0, self.n):
 			for j in range (1, self.n):
-				if (self.current_state[i][j-1] != '.' and self.current_state[i][j-1] == self.current_state[i][j]):
+				if (self.current_state[j-1][i] != '.' and self.current_state[j-1][i] == self.current_state[j][i]):
 					vertical_counter += 1
 					if vertical_counter == self.s-1:
-						return self.current_state[i][j]
+						return self.current_state[j][i]
 					else:
 						continue
 				else:
 					vertical_counter = 0
 					continue
 			vertical_counter = 0 # It has to check every column completely for a vertical win before moving on to check for a horizontal win
-
+		
 		# Horizontal win
 		horizontal_counter = 0
 		for i in range(0, self.n):
 			for j in range (1, self.n):
-				if (self.current_state[j-1][i] != '.' and self.current_state[j-1][i] == self.current_state[j][i]):
+				if (self.current_state[i][j-1] != '.' and self.current_state[i][j-1] == self.current_state[i][j]):
 					horizontal_counter += 1
 					if horizontal_counter == self.s-1:
-						return self.current_state[j][i]
+						return self.current_state[i][j]
 					else:
 						continue
 				else:
@@ -142,12 +144,42 @@ class Game:
 					continue
 			horizontal_counter = 0
 
-		# Main diagonal win
-		if (self.current_state[0][0] != '.' and
-			self.current_state[0][0] == self.current_state[1][1] and
-			self.current_state[0][0] == self.current_state[2][2]):
-			return self.current_state[0][0]
-		# Second diagonal win
+		diagonal_counter = 0
+		#First diagonal from top left to bottom right
+		for i in range(1, self.n):
+			if (self.current_state[i-1][i-1] != '.' and self.current_state[i-1][i-1] == self.current_state[i][i]):
+				diagonal_counter += 1
+				if diagonal_counter == self.s-1:
+					return self.current_state[i][i]
+			else:
+				diagonal_counter = 0
+		diagonal_counter = 0
+		if (self.n > self.s):
+			diagonal1_counter = 0
+			diagonal2_counter = 0
+			for i in range(1, self.n-self.s):
+				for j in range (i, self.n):
+					if (self.current_state[i-1][j-1] != '.' and self.current_state[i-1][j-1] == self.current_state[i][j]):
+						diagonal1_counter += 1
+					
+						if diagonal_counter == self.s-1:
+							return self.current_state[i][j]
+					else:
+						diagonal2_counter = 0
+					
+					if (self.current_state[j-1][i-1] != '.' and self.current_state[j-1][i-1] == self.current_state[j][i]):
+						diagonal2_counter += 1
+					
+						if diagonal_counter == self.s-1:
+							return self.current_state[i][j]
+					else:
+						diagonal2_counter = 0
+				diagonal1_counter = 0
+				diagonal2_counter = 0
+
+			
+
+		# Second diagonal win (/)
 		if (self.current_state[0][2] != '.' and
 			self.current_state[0][2] == self.current_state[1][1] and
 			self.current_state[0][2] == self.current_state[2][0]):
@@ -325,11 +357,7 @@ class Game:
 		min_score_matrix = np.zeros((self.n,self.n))					#Matrix for min used to store the sum of adjacent values.
 		max_final_score_matrix = np.zeros((self.n,self.n))				#Matrix used to store the final score of the pieces of max.
 		min_final_score_matrix = np.zeros((self.n,self.n))				#Matrix used to store the final score of the pieces of max.
-		# for i in range(0, self.n):
-		# 	row = []
-		# 	for j in range(0, self.n):
-		# 		row.append(0)
-		# 	matrix.append(row)
+
 		for i in range(0, self.n):										#Loop that will go through each position of the current state and perform the heuristic.
 			for j in range(0, self.n):
 				if (self.current_state[i][j] == 'box'):					#Each box is worth 0 points.
@@ -379,11 +407,7 @@ class Test_case:
 		min_score_matrix = np.zeros((self.n,self.n))					#Matrix for min used to store the sum of adjacent values.
 		max_final_score_matrix = np.zeros((self.n,self.n))				#Matrix used to store the final score of the pieces of max.
 		min_final_score_matrix = np.zeros((self.n,self.n))				#Matrix used to store the final score of the pieces of max.
-		# for i in range(0, self.n):
-		# 	row = []
-		# 	for j in range(0, self.n):
-		# 		row.append(0)
-		# 	matrix.append(row)
+		
 		for i in range(0, self.n):										#Loop that will go through each position of the current state and perform the heuristic.
 			for j in range(0, self.n):
 				if (self.current_state[i][j] == 'box'):					#Each box is worth 0 points.
@@ -433,10 +457,11 @@ class Test_case:
 		
 def main():
 	# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
-	# g = Game(4, 0, 4, list(), 0, 0, 0, True, 1,recommend=True)
-	# g.draw_board()
-	case = Test_case()
-	print(case.slow_heuristic())	# g.play(algo=Game.ALPHABETA,player_x=Game.AI,player_o=Game.AI)
+	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 1, 1, 10, True, 4,recommend=True)
+	g.draw_board()
+	# case = Test_case()
+	# print(case.slow_heuristic())	
+	g.play()
 	# g.play(algo=Game.MINIMAX,player_x=Game.AI,player_o=Game.HUMAN)
 
 if __name__ == "__main__":
