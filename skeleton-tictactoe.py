@@ -256,26 +256,27 @@ class Game:
 		# 0  - a tie
 		# 1  - loss for 'X'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
-		depth += 1
-		value = 2
+
+		value = 200
 		if max:
-			value = -2
+			value = -200
 		x = None
 		y = None
+		if depth == max_depth:
+			return (self.slow_heuristic(), x, y)
+		if time.time() - start_time + 0.10 >= self.t:
+			return (self.slow_heuristic(), x, y)
+		depth += 1
 		result = self.is_end()
 		if result == 'X':
-			return (-1, x, y)
+			return (-100, x, y)
 		elif result == 'O':
-			return (1, x, y)
+			return (100, x, y)
 		elif result == '.':
 			return (0, x, y)
 		for i in range(0, self.n):
 			for j in range(0, self.n):
 				if self.current_state[i][j] == '.':
-					if depth == max_depth:
-						return (self.slow_heuristic(), x, y)
-					if time.time() - start_time + 0.10 >= self.t:
-						return (self.slow_heuristic(), x, y)
 					if max:
 						self.current_state[i][j] = 'O'
 						(v, _, _) = self.minimax(start_time, max_depth, depth, max=False)
@@ -301,25 +302,26 @@ class Game:
 		# 1  - loss for 'X'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
 		depth += 1
-		value = 2
+		value = 200
 		if max:
-			value = -2
+			value = -200
 		x = None
 		y = None
+		if depth == max_depth:
+			return (self.slow_heuristic(), x, y)
+		if time.time() - start_time + 0.10 >= self.t:
+			return (self.slow_heuristic(), x, y)
+		depth += 1
 		result = self.is_end()
 		if result == 'X':
-			return (-1, x, y)
+			return (-100, x, y)
 		elif result == 'O':
-			return (1, x, y)
+			return (100, x, y)
 		elif result == '.':
 			return (0, x, y)
 		for i in range(0, self.n):
 			for j in range(0, self.n):
 				if self.current_state[i][j] == '.':
-					if depth == max_depth:
-						return (self.slow_heuristic(), i, j)
-					if time.time() - start_time + 0.10 >= self.t:
-						return (self.slow_heuristic(), i, j)
 					if max:
 						self.current_state[i][j] = 'O'
 						(v, _, _) = self.alphabeta(start_time, max_depth, depth, alpha, beta, max=False)
@@ -519,7 +521,7 @@ class Test_case:
 		
 def main():
 	# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
-	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 10, 10, 5, False, 4,recommend=True)
+	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 10, 10, 5, True, 4,recommend=True)
 	# g.draw_board()
 	# case = Test_case()
 	# print(case.slow_heuristic())	
