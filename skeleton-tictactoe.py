@@ -350,8 +350,6 @@ class Game:
 		return (value, x, y)
 
 	def play(self,algo=None,player_x=None,player_o=None):
-		player_x_flag = False
-		player_o_flag = False
 		if algo == None:
 			algo = self.ALPHABETA
 		if self.play_mode == 1:
