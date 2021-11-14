@@ -515,13 +515,15 @@ class Test_case:
 		
 		
 def main():
-	# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
-	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 1, 1, 5, False, 4,recommend=True)
-	g.draw_board()
-	# case = Test_case()
-	# print(case.slow_heuristic())	
-	g.play()
-	# g.play(algo=Game.MINIMAX,player_x=Game.AI,player_o=Game.HUMAN)
+    # n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
+    g = Game(5, 4, 4, [(0, 0), (1, 3), (2, 1), (3, 3)],
+             1, 1, 5, False, 4, recommend=True)
+    g.draw_board()
+    # case = Test_case()
+    # print(case.slow_heuristic())
+    g.play()
+    # g.play(algo=Game.MINIMAX,player_x=Game.AI,player_o=Game.HUMAN)
+
 
 if __name__ == "__main__":
-	main()
+    main()
