@@ -50,7 +50,7 @@ def input_extraction():																#Method that will be used to prompt the u
 	d1 = int_extraction("Please enter the maximum depth of the adverserial search d1 [1, sizeofboard]", 1, n-1)
 	d2 = int_extraction("Please enter the maximum depth of the adverserial search d2 [1, sizeofboard]", 1, n-1)
 	t = int_extraction("Please enter the maximum allowed time for the program to return a move", 1, float('inf'))
-	a = boolean_extraction("To force the use of minimax, enter '1'. To force the use of alphabeta, enter '2'", 1, 2)
+	a = int_extraction("To force the use of minimax, enter '0'. To force the use of alphabeta, enter '1'", 0, 1)
 	play_mode = int_extraction("Please enter the game mode: 1. H-H, 2. H-AI, 3. AI-H, 4. AI-AI", 1, 4)
 	return n, b, s, coordinates_list, d1, d2, t, a, play_mode
 
@@ -102,7 +102,7 @@ class Game:
 		print()
 		for y in range(0, self.n):
 			for x in range(0, self.n):
-				print(F'{self.current_state[x][y]}', end="")
+				print(F'{self.current_state[y][x]}', end="")
 			print()
 		print()
 		
@@ -120,7 +120,7 @@ class Game:
 		vertical_counter = 0
 		for i in range(0, self.n):
 			for j in range (1, self.n):
-				if (self.current_state[j-1][i] != '.' and self.current_state[j-1][i] == self.current_state[j][i]):
+				if (self.current_state[j-1][i] != '.' and self.current_state[j-1][i] != 'b' and self.current_state[j-1][i] == self.current_state[j][i]):
 					vertical_counter += 1
 					if vertical_counter == self.s-1:
 						return self.current_state[j][i]
@@ -135,7 +135,7 @@ class Game:
 		horizontal_counter = 0
 		for i in range(0, self.n):
 			for j in range (1, self.n):
-				if (self.current_state[i][j-1] != '.' and self.current_state[i][j-1] == self.current_state[i][j]):
+				if (self.current_state[i][j-1] != '.' and self.current_state[i][j-1] != 'b' and self.current_state[i][j-1] == self.current_state[i][j]):
 					horizontal_counter += 1
 					if horizontal_counter == self.s-1:
 						return self.current_state[i][j]
@@ -149,7 +149,7 @@ class Game:
 		diagonal_counter = 0
 		#First set of diagonals from top left to bottom right
 		for i in range(1, self.n):												#check for a win on the main diagonal
-			if (self.current_state[i-1][i-1] != '.' and self.current_state[i-1][i-1] == self.current_state[i][i]):
+			if (self.current_state[i-1][i-1] != '.' and self.current_state[i-1][i-1] != 'b' and self.current_state[i-1][i-1] == self.current_state[i][i]):
 				diagonal_counter += 1
 				if diagonal_counter == self.s-1:
 					return self.current_state[i][i]
@@ -160,7 +160,7 @@ class Game:
 			diagonal2_counter = 0
 			for i in range(1, self.n-self.s):
 				for j in range (1, self.n-i):
-					if (self.current_state[j-1][i+j-1] != '.' and self.current_state[j-1][i+j-1] == self.current_state[j][i+j]):
+					if (self.current_state[j-1][i+j-1] != '.' and self.current_state[j-1][i+j-1] != 'b' and self.current_state[j-1][i+j-1] == self.current_state[j][i+j]):
 						diagonal1_counter += 1
 					
 						if diagonal_counter == self.s-1:
@@ -168,7 +168,7 @@ class Game:
 					else:
 						diagonal2_counter = 0
 					
-					if (self.current_state[i+j-1][j-1] != '.' and self.current_state[i+j-1][j-1] == self.current_state[i+j][j]):
+					if (self.current_state[i+j-1][j-1] != '.' and self.current_state[i+j-1][j-1] != 'b' and self.current_state[i+j-1][j-1] == self.current_state[i+j][j]):
 						diagonal2_counter += 1
 					
 						if diagonal_counter == self.s-1:
@@ -186,7 +186,7 @@ class Game:
 			current_state_flipped.append(self.current_state[i][::-1])
 		
 		for i in range(1, self.n):											#check for a win on the main diagonal
-			if (current_state_flipped[i-1][i-1] != '.' and current_state_flipped[i-1][i-1] == current_state_flipped[i][i]):
+			if (current_state_flipped[i-1][i-1] != '.' and current_state_flipped[i-1][i-1] != 'b' and current_state_flipped[i-1][i-1] == current_state_flipped[i][i]):
 				diagonal_counter += 1
 				if diagonal_counter == self.s-1:
 					return current_state_flipped[i][i]
@@ -197,7 +197,7 @@ class Game:
 			diagonal2_counter = 0
 			for i in range(1, self.n-self.s):
 				for j in range (1, self.n-i):
-					if (current_state_flipped[j-1][i+j-1] != '.' and current_state_flipped[j-1][i+j-1] == current_state_flipped[j][i+j]):
+					if (current_state_flipped[j-1][i+j-1] != '.' and current_state_flipped[j-1][i+j-1] != 'b' and current_state_flipped[j-1][i+j-1] == current_state_flipped[j][i+j]):
 						diagonal1_counter += 1
 					
 						if diagonal_counter == self.s-1:
@@ -205,7 +205,7 @@ class Game:
 					else:
 						diagonal2_counter = 0
 					
-					if (current_state_flipped[i+j-1][j-1] != '.' and current_state_flipped[i+j-1][j-1] == current_state_flipped[i+j][j]):
+					if (current_state_flipped[i+j-1][j-1] != '.' and current_state_flipped[i+j-1][j-1] != 'b' and current_state_flipped[i+j-1][j-1] == current_state_flipped[i+j][j] ):
 						diagonal2_counter += 1
 					
 						if diagonal_counter == self.s-1:
@@ -255,11 +255,11 @@ class Game:
 		return self.player_turn
 
 	def minimax(self, max=False):
-		# Minimizing for '◦' and maximizing for '•'
+		# Minimizing for '•' and maximizing for '◦'
 		# Possible values are:
-		# -1 - win for '◦'
+		# -1 - win for '•'
 		# 0  - a tie
-		# 1  - loss for '◦'
+		# 1  - loss for '•'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
 		value = 2
 		if max:
@@ -267,9 +267,9 @@ class Game:
 		x = None
 		y = None
 		result = self.is_end()
-		if result == '◦':
+		if result == '•':
 			return (-1, x, y)
-		elif result == '•':
+		elif result == '◦':
 			return (1, x, y)
 		elif result == '.':
 			return (0, x, y)
@@ -277,14 +277,14 @@ class Game:
 			for j in range(0, self.n):
 				if self.current_state[i][j] == '.':
 					if max:
-						self.current_state[i][j] = '•'
+						self.current_state[i][j] = '◦'
 						(v, _, _) = self.minimax(max=False)
 						if v > value:
 							value = v
 							x = i
 							y = j
 					else:
-						self.current_state[i][j] = '◦'
+						self.current_state[i][j] = '•'
 						(v, _, _) = self.minimax(max=True)
 						if v < value:
 							value = v
@@ -294,11 +294,11 @@ class Game:
 		return (value, x, y)
 
 	def alphabeta(self, alpha=-2, beta=2, max=False):
-		# Minimizing for '◦' and maximizing for '•'
+		# Minimizing for '•' and maximizing for '◦'
 		# Possible values are:
-		# -1 - win for '◦'
+		# -1 - win for '•'
 		# 0  - a tie
-		# 1  - loss for '◦'
+		# 1  - loss for '•'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
 		value = 2
 		if max:
@@ -306,9 +306,9 @@ class Game:
 		x = None
 		y = None
 		result = self.is_end()
-		if result == '◦':
+		if result == '•':
 			return (-1, x, y)
-		elif result == '•':
+		elif result == '◦':
 			return (1, x, y)
 		elif result == '.':
 			return (0, x, y)
@@ -316,14 +316,14 @@ class Game:
 			for j in range(0, self.n):
 				if self.current_state[i][j] == '.':
 					if max:
-						self.current_state[i][j] = '•'
+						self.current_state[i][j] = '◦'
 						(v, _, _) = self.alphabeta(alpha, beta, max=False)
 						if v > value:
 							value = v
 							x = i
 							y = j
 					else:
-						self.current_state[i][j] = '◦'
+						self.current_state[i][j] = '•'
 						(v, _, _) = self.alphabeta(alpha, beta, max=True)
 						if v < value:
 							value = v
@@ -487,7 +487,7 @@ class Test_case:
 		
 def main():
 	# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
-	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 1, 1, 10, True, 4,recommend=True)
+	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 1, 1, 5, False, 4,recommend=True)
 	g.draw_board()
 	# case = Test_case()
 	# print(case.slow_heuristic())	
