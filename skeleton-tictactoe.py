@@ -291,7 +291,7 @@ class Game:
 					self.current_state[i][j] = '.'
 		return (value, x, y)
 
-	def alphabeta(self, max_depth, depth, alpha=-2, beta=2, max=False, level=0):
+	def alphabeta(self, max_depth, depth, alpha=-2, beta=2, max=False):
 		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
 		# -1 - win for 'X'
