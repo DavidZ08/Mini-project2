@@ -5,7 +5,7 @@ import sys
 import numpy as np
 
 
-def int_extraction(question, bound1, bound2):							#Method that will be used to prompr the user for an integer and check that it is within bounds.
+def int_extraction(question, bound1, bound2):							#Method that will be used to prompt the user for an integer and check that it is within bounds.
 	while True:
 		try:
 			print(question)
@@ -29,11 +29,13 @@ def boolean_extraction(question, bound1, bound2):						#Method that will prompt 
 def blocposition_extraction(board_size, bloc_number):					#Method that will prompt the user for the positions of the blocs.
 	coordinates_list = list()
 	x_pos = 0
+	x_pos_string = "A"
 	y_pos = 0
 	for i in range(bloc_number):
 		while not int(x_pos) in range (0, board_size):
-			print("Enter the x coordinate of your bloc.")
-			x_pos_string = input()
+			while ord(x_pos_string) < ord("A") and ord(x_pos_string) > ord("K"):
+				print("Enter the x coordinate of your bloc.")
+				x_pos_string = input()
 			x_pos = coordinate_extraction(x_pos_string)
 		while not int(y_pos) in range (0, board_size):
 			print("Enter the y coordinate of your bloc.")
@@ -54,22 +56,10 @@ def input_extraction():																#Method that will be used to prompt the u
 	play_mode = int_extraction("Please enter the game mode: 1. H-H, 2. H-AI, 3. AI-H, 4. AI-AI", 1, 4)
 	return n, b, s, coordinates_list, d1, d2, t, a, play_mode
 
-def coordinate_extraction(str):														#Method that will be used to convert aphabetical coordinates to numerical ones.
+def coordinate_extraction(str):														#Method that will be used to convert alphabetical coordinates to numerical ones.
 	alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'H' : 6, 'I' : 7, 'J' : 8, 'K' : 9}
 	return alphabet_coordinates[str]
 
-def move_extraction_human(board_size):												#Method that will be used to prompt the user for coordinates.
-	#TODO: finish this method for human players, gives them only one chance to re-enter their move. In case of another failure, makes player lose the game.
-	print("Enter the x coordinate of your move.")
-	x_pos_string = input()
-	x_pos = coordinate_extraction(x_pos_string)
-	if (x_pos > board_size or x_pos < 0):
-		print("Enter the y coordinate of your move.")
-	y_pos = input()
-	coordinate_tuple = (x_pos, y_pos)
-	return coordinate_tuple
-
-#TODO: Finish method for AI players, gives them 0 chances.
 class Game:
 	MINIMAX = 0
 	ALPHABETA = 1
@@ -238,6 +228,7 @@ class Game:
 		return self.result
 
 	def input_move(self):
+		attempt_counter = 0
 		while True:
 			print(F'Player {self.player_turn}, enter your move:')
 			px = int(input('enter the x coordinate: '))
@@ -246,6 +237,10 @@ class Game:
 				return (px,py)
 			else:
 				print('The move is not valid! Try again.')
+				attempt_counter += 1
+				if attempt_counter == 2:
+					print("You have lost the game")
+					return False
 
 	def switch_player(self):
 		if self.player_turn == '◦':
@@ -343,14 +338,30 @@ class Game:
 		return (value, x, y)
 
 	def play(self,algo=None,player_x=None,player_o=None):
+		player_x_flag = False
+		player_o_flag = False
 		if algo == None:
 			algo = self.ALPHABETA
-		if player_x == None:
+		if self.play_mode == 1:
 			player_x = self.HUMAN
-		if player_o == None:
 			player_o = self.HUMAN
+		elif self.play_mode == 2:
+			player_x = self.HUMAN
+			player_o = self.AI
+		elif self.play_mode == 3:
+			player_x = self.AI
+			player_o = self.HUMAN
+		elif self.play_mode == 4:
+			player_x = self.AI
+			player_o = self.AI
 		while True:
 			self.draw_board()
+			if player_x_flag == True:
+				print("Player X loses by penalty.")
+			if player_o_flag == True:
+				print("Player O loses by penalty.")
+			player_x_flag = False
+			player_o_flag = False
 			if self.check_end():
 				return
 			start = time.time()
@@ -369,11 +380,23 @@ class Game:
 					if self.recommend:
 						print(F'Evaluation time: {round(end - start, 7)}s')
 						print(F'Recommended move: x = {x}, y = {y}')
-					(x,y) = self.input_move()
+					(x,y) = (0,0)
+					placeholder = self.input_move() 
+					if type(placeholder) == bool and player_x == self.HUMAN:
+						player_x_flag = True
+					elif type(placeholder) == bool and player_o == self.HUMAN:
+						player_o_flag = True
+					else: 
+						(x,y) = placeholder
 			if (self.player_turn == '◦' and player_x == self.AI) or (self.player_turn == '•' and player_o == self.AI):
 						print(F'Evaluation time: {round(end - start, 7)}s')
-						print(F'Player {self.player_turn} under AI control plays: x = {x}, y = {y}')
-			self.current_state[x][y] = self.player_turn
+						print(F'Player {self.player_turn} under AI control plays: x = {x}, y = {y}') #prints immediately for AI player.
+						if (self.is_valid(x,y) == False) and player_x == self.AI:
+							player_x_flag = True
+						elif (self.is_valid(x,y) == False) and player_o == self.AI:
+							player_o_flag = True
+						else: 
+							self.current_state[x][y] = self.player_turn
 			self.switch_player()
 
 	#Max player will always be the white pieces since that player always goes first.
