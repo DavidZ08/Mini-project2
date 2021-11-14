@@ -257,16 +257,16 @@ class Game:
 		# 1  - loss for 'X'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
 		depth += 1
-		value = 2
+		value = 200
 		if max:
-			value = -2
+			value = -200
 		x = None
 		y = None
 		result = self.is_end()
 		if result == 'X':
-			return (-1, x, y)
+			return (-1000, x, y)
 		elif result == 'O':
-			return (1, x, y)
+			return (1000, x, y)
 		elif result == '.':
 			return (0, x, y)
 		for i in range(0, self.n):
@@ -301,16 +301,16 @@ class Game:
 		# 1  - loss for 'X'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
 		depth += 1
-		value = 2
+		value = 200
 		if max:
-			value = -2
-		x = None
-		y = None
+			value = -200
+		x = 0
+		y = 0
 		result = self.is_end()
 		if result == 'X':
-			return (-1, x, y)
+			return (-1000, x, y)
 		elif result == 'O':
-			return (1, x, y)
+			return (1000, x, y)
 		elif result == '.':
 			return (0, x, y)
 		for i in range(0, self.n):
@@ -517,7 +517,7 @@ class Test_case:
 		
 def main():
 	# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
-	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 10, 10, 5, False, 4,recommend=True)
+	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 4, 4, 5, False, 4,recommend=True)
 	# g.draw_board()
 	# case = Test_case()
 	# print(case.slow_heuristic())	
