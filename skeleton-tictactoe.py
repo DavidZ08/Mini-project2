@@ -373,14 +373,14 @@ class Game:
 			start = time.time()
 			if algo == self.MINIMAX:
 				if self.player_turn == 'X':
-					(_, x, y) = self.minimax(max=False, max_depth=self.d2)
+					(_, x, y) = self.minimax(max=False, max_depth=self.d2, depth=0)
 				else:
-					(_, x, y) = self.minimax(max=True, max_depth=self.d1)
+					(_, x, y) = self.minimax(max=True, max_depth=self.d1, depth=0)
 			else: # algo == self.ALPHABETA
 				if self.player_turn == 'X':
-					(m, x, y) = self.alphabeta(max=False, max_depth=self.d2)
+					(m, x, y) = self.alphabeta(max=False, max_depth=self.d2, depth=0)
 				else:
-					(m, x, y) = self.alphabeta(max=True, max_depth=self.d1)
+					(m, x, y) = self.alphabeta(max=True, max_depth=self.d1, depth=0)
 			end = time.time()
 			if (self.player_turn == 'X' and player_x == self.HUMAN) or (self.player_turn == 'O' and player_o == self.HUMAN):
 					if self.recommend:
@@ -394,7 +394,7 @@ class Game:
 						player_o_flag = True
 					else: 
 						(x,y) = placeholder
-			if (self.player_turn == '◦' and player_x == self.AI) or (self.player_turn == '•' and player_o == self.AI):
+			if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
 						print(F'Evaluation time: {round(end - start, 7)}s')
 						print(F'Player {self.player_turn} under AI control plays: x = {x}, y = {y}') #prints immediately for AI player.
 						if (self.is_valid(x,y) == False) and player_x == self.AI:
