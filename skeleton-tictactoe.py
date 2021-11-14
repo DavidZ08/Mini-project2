@@ -368,12 +368,6 @@ class Game:
 			player_o = self.AI
 		while True:
 			self.draw_board()
-			if player_x_flag == True:
-				print("Player X loses by penalty.")
-			if player_o_flag == True:
-				print("Player O loses by penalty.")
-			player_x_flag = False
-			player_o_flag = False
 			if self.check_end():
 				return
 			start = time.time()
@@ -394,21 +388,30 @@ class Game:
 						print(F'Recommended move: x = {x}, y = {y}')
 					(x,y) = (0,0)
 					placeholder = self.input_move() 
-					if type(placeholder) == bool and self.player_turn == 'X' and player_x == self.HUMAN:
-						player_x_flag = True
-					elif type(placeholder) == bool and self.player_turn == 'O' and player_o == self.HUMAN:
-						player_o_flag = True
+					if type(placeholder) == bool and self.player_turn == 'X':
+						print("Player X loses because of illegal move")
+						return
+					elif type(placeholder) == bool and self.player_turn == 'O':
+						print("Player O loses because of illegal move")
+						return
 					else: 
 						(x,y) = placeholder
 			if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
 						print(F'Evaluation time: {round(end - start, 7)}s')
 						print(F'Player {self.player_turn} under AI control plays: x = {x}, y = {y}') #prints immediately for AI player.
-						if (self.is_valid(x,y) == False) and self.player_turn == 'X' and (end - start) > self.t and player_x == self.AI:
-							player_x_flag = True
-						elif (self.is_valid(x,y) == False) and self.player_turn == 'O' and (end - start) > self.t and player_o == self.AI:
-							player_o_flag = True
-						else: 
-							self.current_state[x][y] = self.player_turn
+						if self.is_valid(x,y) == False and self.player_turn == 'X':
+							print("Player X loses because of illegal move")
+							return
+						if self.player_turn == 'X' and (end - start) > self.t:
+							print("Player X loses because he exceeded the time limit")
+							return
+						if (self.is_valid(x,y) == False) and self.player_turn == 'O':
+							print("Player O loses because of illegal move")
+							return
+						if self.player_turn == 'O' and (end - start) > self.t:
+							print("Player O loses because he exceeded the time limit")
+							return
+			self.current_state[x][y] = self.player_turn
 			self.switch_player()
 
 	#Max player will always be the white pieces since that player always goes first.
@@ -519,7 +522,7 @@ class Test_case:
 		
 def main():
 	# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
-	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 10, 10, 5, True, 4,recommend=True)
+	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 15, 15, 5, False, 4,recommend=True)
 	# g.draw_board()
 	# case = Test_case()
 	# print(case.slow_heuristic())	
