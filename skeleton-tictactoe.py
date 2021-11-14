@@ -261,10 +261,10 @@ class Game:
 			value = -2
 		x = None
 		y = None
+		result = self.is_end()
 		if depth == max_depth:
 			return (self.slow_heuristic(), x, y)
 		depth += 1
-		result = self.is_end()
 		if result == 'X':
 			return (-1, x, y)
 		elif result == 'O':
@@ -303,10 +303,10 @@ class Game:
 			value = -2
 		x = None
 		y = None
+		result = self.is_end()
 		if depth == max_depth:
 			return (self.slow_heuristic(), x, y)
 		depth += 1
-		result = self.is_end()
 		if result == 'X':
 			return (-1, x, y)
 		elif result == 'O':
@@ -318,14 +318,14 @@ class Game:
 				if self.current_state[i][j] == '.':
 					if max:
 						self.current_state[i][j] = 'O'
-						(v, _, _, ) = self.alphabeta(max_depth, depth, alpha, beta, max=False)
+						(v, x, y) = self.alphabeta(max_depth, depth, alpha, beta, max=False)
 						if v > value:
 							value = v
 							x = i
 							y = j
 					else:
 						self.current_state[i][j] = 'X'
-						(v, _, _) = self.alphabeta(max_depth, depth, alpha, beta, max=True)
+						(v, x, y) = self.alphabeta(max_depth, depth, alpha, beta, max=True)
 						if v < value:
 							value = v
 							x = i
@@ -407,7 +407,6 @@ class Game:
 
 	#Max player will always be the white pieces since that player always goes first.
 	def slow_heuristic(self):
-		start = time.time()
 		max_matrix = np.zeros((self.n,self.n))							#Matrix of zeros used to evaluate the max player's score for each of its pieces.
 		min_matrix = np.zeros((self.n,self.n))							#Matrix of zeros used to evaluate the min player's score for each of its pieces.
 		white_matrix = np.zeros((self.n,self.n), dtype=bool)			#Boolean matrix to indentify the white pieces.
@@ -443,8 +442,6 @@ class Game:
 				min_score_matrix[i, j] = np.sum(min_region) - min_matrix[i, j]
 		max_final_score_matrix = np.where(white_matrix, max_score_matrix, 0)
 		min_final_score_matrix = np.where(black_matrix, min_score_matrix, 0)
-		end = time.time()
-		print(end - start)
 		return np.sum(max_final_score_matrix) + np.sum(min_final_score_matrix)		#Returns the sum of the all the scores in both max and min score matrices.
 		
 #Class used to test my heurisic while we build the functional game class.		
@@ -515,15 +512,13 @@ class Test_case:
 		
 		
 def main():
-    # n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
-    g = Game(5, 4, 4, [(0, 0), (1, 3), (2, 1), (3, 3)],
-             1, 1, 5, False, 4, recommend=True)
-    g.draw_board()
-    # case = Test_case()
-    # print(case.slow_heuristic())
-    g.play()
-    # g.play(algo=Game.MINIMAX,player_x=Game.AI,player_o=Game.HUMAN)
-
+	# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
+	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 2, 2, 5, False, 4,recommend=True)
+	g.draw_board()
+	# case = Test_case()
+	# print(case.slow_heuristic())	
+	g.play()
+	# g.play(algo=Game.MINIMAX,player_x=Game.AI,player_o=Game.HUMAN)
 
 if __name__ == "__main__":
     main()
