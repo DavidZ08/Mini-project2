@@ -94,9 +94,9 @@ class Game:
 	def initialize_game(self):
 		self.current_state = [['.'for i in range (self.n)] for j in range(self.n)]
 		for i in self.coordinates_list:
-			self.current_state[i[0]][i[1]] = 'b'
-		# Player ◦ always plays first
-		self.player_turn = '◦'
+			self.current_state[i[0]][i[1]] = 'B'
+		# Player O always plays first
+		self.player_turn = 'O'
 
 	def draw_board(self):
 		print()
@@ -120,7 +120,7 @@ class Game:
 		vertical_counter = 0
 		for i in range(0, self.n):
 			for j in range (1, self.n):
-				if (self.current_state[j-1][i] != '.' and self.current_state[j-1][i] != 'b' and self.current_state[j-1][i] == self.current_state[j][i]):
+				if (self.current_state[j-1][i] != '.' and self.current_state[j-1][i] != 'B' and self.current_state[j-1][i] == self.current_state[j][i]):
 					vertical_counter += 1
 					if vertical_counter == self.s-1:
 						return self.current_state[j][i]
@@ -135,7 +135,7 @@ class Game:
 		horizontal_counter = 0
 		for i in range(0, self.n):
 			for j in range (1, self.n):
-				if (self.current_state[i][j-1] != '.' and self.current_state[i][j-1] != 'b' and self.current_state[i][j-1] == self.current_state[i][j]):
+				if (self.current_state[i][j-1] != '.' and self.current_state[i][j-1] != 'B' and self.current_state[i][j-1] == self.current_state[i][j]):
 					horizontal_counter += 1
 					if horizontal_counter == self.s-1:
 						return self.current_state[i][j]
@@ -149,7 +149,7 @@ class Game:
 		diagonal_counter = 0
 		#First set of diagonals from top left to bottom right
 		for i in range(1, self.n):												#check for a win on the main diagonal
-			if (self.current_state[i-1][i-1] != '.' and self.current_state[i-1][i-1] != 'b' and self.current_state[i-1][i-1] == self.current_state[i][i]):
+			if (self.current_state[i-1][i-1] != '.' and self.current_state[i-1][i-1] != 'B' and self.current_state[i-1][i-1] == self.current_state[i][i]):
 				diagonal_counter += 1
 				if diagonal_counter == self.s-1:
 					return self.current_state[i][i]
@@ -160,7 +160,7 @@ class Game:
 			diagonal2_counter = 0
 			for i in range(1, self.n-self.s):
 				for j in range (1, self.n-i):
-					if (self.current_state[j-1][i+j-1] != '.' and self.current_state[j-1][i+j-1] != 'b' and self.current_state[j-1][i+j-1] == self.current_state[j][i+j]):
+					if (self.current_state[j-1][i+j-1] != '.' and self.current_state[j-1][i+j-1] != 'B' and self.current_state[j-1][i+j-1] == self.current_state[j][i+j]):
 						diagonal1_counter += 1
 					
 						if diagonal_counter == self.s-1:
@@ -168,7 +168,7 @@ class Game:
 					else:
 						diagonal2_counter = 0
 					
-					if (self.current_state[i+j-1][j-1] != '.' and self.current_state[i+j-1][j-1] != 'b' and self.current_state[i+j-1][j-1] == self.current_state[i+j][j]):
+					if (self.current_state[i+j-1][j-1] != '.' and self.current_state[i+j-1][j-1] != 'B' and self.current_state[i+j-1][j-1] == self.current_state[i+j][j]):
 						diagonal2_counter += 1
 					
 						if diagonal_counter == self.s-1:
@@ -186,7 +186,7 @@ class Game:
 			current_state_flipped.append(self.current_state[i][::-1])
 		
 		for i in range(1, self.n):											#check for a win on the main diagonal
-			if (current_state_flipped[i-1][i-1] != '.' and current_state_flipped[i-1][i-1] != 'b' and current_state_flipped[i-1][i-1] == current_state_flipped[i][i]):
+			if (current_state_flipped[i-1][i-1] != '.' and current_state_flipped[i-1][i-1] != 'B' and current_state_flipped[i-1][i-1] == current_state_flipped[i][i]):
 				diagonal_counter += 1
 				if diagonal_counter == self.s-1:
 					return current_state_flipped[i][i]
@@ -197,7 +197,7 @@ class Game:
 			diagonal2_counter = 0
 			for i in range(1, self.n-self.s):
 				for j in range (1, self.n-i):
-					if (current_state_flipped[j-1][i+j-1] != '.' and current_state_flipped[j-1][i+j-1] != 'b' and current_state_flipped[j-1][i+j-1] == current_state_flipped[j][i+j]):
+					if (current_state_flipped[j-1][i+j-1] != '.' and current_state_flipped[j-1][i+j-1] != 'B' and current_state_flipped[j-1][i+j-1] == current_state_flipped[j][i+j]):
 						diagonal1_counter += 1
 					
 						if diagonal_counter == self.s-1:
@@ -205,7 +205,7 @@ class Game:
 					else:
 						diagonal2_counter = 0
 					
-					if (current_state_flipped[i+j-1][j-1] != '.' and current_state_flipped[i+j-1][j-1] != 'b' and current_state_flipped[i+j-1][j-1] == current_state_flipped[i+j][j] ):
+					if (current_state_flipped[i+j-1][j-1] != '.' and current_state_flipped[i+j-1][j-1] != 'B' and current_state_flipped[i+j-1][j-1] == current_state_flipped[i+j][j] ):
 						diagonal2_counter += 1
 					
 						if diagonal_counter == self.s-1:
@@ -228,10 +228,10 @@ class Game:
 		self.result = self.is_end()
 		# Printing the appropriate message if the game has ended
 		if self.result != None:
-			if self.result == '◦':
-				print('The winner is ◦!')
-			elif self.result == '•':
-				print('The winner is •!')
+			if self.result == 'X':
+				print('The winner is X!')
+			elif self.result == 'O':
+				print('The winner is O!')
 			elif self.result == '.':
 				print("It's a tie!")
 			self.initialize_game()
@@ -248,28 +248,29 @@ class Game:
 				print('The move is not valid! Try again.')
 
 	def switch_player(self):
-		if self.player_turn == '◦':
-			self.player_turn = '•'
-		elif self.player_turn == '•':
-			self.player_turn = '◦'
+		if self.player_turn == 'X':
+			self.player_turn = 'O'
+		elif self.player_turn == 'O':
+			self.player_turn = 'X'
 		return self.player_turn
 
-	def minimax(self, max=False):
-		# Minimizing for '•' and maximizing for '◦'
+	def minimax(self, max=False, level=0):
+		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
-		# -1 - win for '•'
+		# -1 - win for 'X'
 		# 0  - a tie
-		# 1  - loss for '•'
+		# 1  - loss for 'X'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
+		
 		value = 2
 		if max:
 			value = -2
 		x = None
 		y = None
 		result = self.is_end()
-		if result == '•':
+		if result == 'X':
 			return (-1, x, y)
-		elif result == '◦':
+		elif result == 'O':
 			return (1, x, y)
 		elif result == '.':
 			return (0, x, y)
@@ -277,14 +278,14 @@ class Game:
 			for j in range(0, self.n):
 				if self.current_state[i][j] == '.':
 					if max:
-						self.current_state[i][j] = '◦'
+						self.current_state[i][j] = 'O'
 						(v, _, _) = self.minimax(max=False)
 						if v > value:
 							value = v
 							x = i
 							y = j
 					else:
-						self.current_state[i][j] = '•'
+						self.current_state[i][j] = 'X'
 						(v, _, _) = self.minimax(max=True)
 						if v < value:
 							value = v
@@ -293,12 +294,12 @@ class Game:
 					self.current_state[i][j] = '.'
 		return (value, x, y)
 
-	def alphabeta(self, alpha=-2, beta=2, max=False):
-		# Minimizing for '•' and maximizing for '◦'
+	def alphabeta(self, alpha=-2, beta=2, max=False, level=0):
+		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
-		# -1 - win for '•'
+		# -1 - win for 'X'
 		# 0  - a tie
-		# 1  - loss for '•'
+		# 1  - loss for 'X'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
 		value = 2
 		if max:
@@ -306,9 +307,9 @@ class Game:
 		x = None
 		y = None
 		result = self.is_end()
-		if result == '•':
+		if result == 'X':
 			return (-1, x, y)
-		elif result == '◦':
+		elif result == 'O':
 			return (1, x, y)
 		elif result == '.':
 			return (0, x, y)
@@ -316,14 +317,14 @@ class Game:
 			for j in range(0, self.n):
 				if self.current_state[i][j] == '.':
 					if max:
-						self.current_state[i][j] = '◦'
+						self.current_state[i][j] = 'O'
 						(v, _, _) = self.alphabeta(alpha, beta, max=False)
 						if v > value:
 							value = v
 							x = i
 							y = j
 					else:
-						self.current_state[i][j] = '•'
+						self.current_state[i][j] = 'X'
 						(v, _, _) = self.alphabeta(alpha, beta, max=True)
 						if v < value:
 							value = v
@@ -355,22 +356,22 @@ class Game:
 				return
 			start = time.time()
 			if algo == self.MINIMAX:
-				if self.player_turn == '◦':
+				if self.player_turn == 'X':
 					(_, x, y) = self.minimax(max=False)
 				else:
 					(_, x, y) = self.minimax(max=True)
 			else: # algo == self.ALPHABETA
-				if self.player_turn == '◦':
+				if self.player_turn == 'X':
 					(m, x, y) = self.alphabeta(max=False)
 				else:
 					(m, x, y) = self.alphabeta(max=True)
 			end = time.time()
-			if (self.player_turn == '◦' and player_x == self.HUMAN) or (self.player_turn == '•' and player_o == self.HUMAN):
+			if (self.player_turn == 'X' and player_x == self.HUMAN) or (self.player_turn == 'O' and player_o == self.HUMAN):
 					if self.recommend:
 						print(F'Evaluation time: {round(end - start, 7)}s')
 						print(F'Recommended move: x = {x}, y = {y}')
 					(x,y) = self.input_move()
-			if (self.player_turn == '◦' and player_x == self.AI) or (self.player_turn == '•' and player_o == self.AI):
+			if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
 						print(F'Evaluation time: {round(end - start, 7)}s')
 						print(F'Player {self.player_turn} under AI control plays: x = {x}, y = {y}')
 			self.current_state[x][y] = self.player_turn
@@ -390,17 +391,17 @@ class Game:
 
 		for i in range(0, self.n):										#Loop that will go through each position of the current state and perform the heuristic.
 			for j in range(0, self.n):
-				if (self.current_state[i][j] == 'b'):					#Each box is worth 0 points.
+				if (self.current_state[i][j] == 'B'):					#Each box is worth 0 points.
 					max_matrix[i, j] = 0
 					min_matrix[i, j] = 0
 				elif (self.current_state[i][j] == '.'):					#Each empty position is worth 1 for the max player and -1 for the min player.
 					max_matrix[i, j] = 1
 					min_matrix[i, j] = -1
-				elif (self.current_state[i][j] == '◦'):					#Each white piece is worth 2 points.
+				elif (self.current_state[i][j] == 'O'):					#Each white piece is worth 2 points.
 					max_matrix[i, j] = 2
 					min_matrix[i, j] = 2
 					white_matrix[i, j] = True
-				elif (self.current_state[i][j] == '•'):					#Each black piece is worth -2 points.
+				elif (self.current_state[i][j] == 'X'):					#Each black piece is worth -2 points.
 					max_matrix[i, j] = -2
 					min_matrix[i ,j] = -2
 					black_matrix[i, j] = True
@@ -420,11 +421,11 @@ class Game:
 		
 #Class used to test my heurisic while we build the functional game class.		
 class Test_case:
-	def __init__(self, n = 5, current_state = [['b', '.', '•', '.', '.'],
-				 							   ['.', '•', '◦', 'b', '.'],
-				 							   ['.', 'b', '◦', '.', '.'],
-				 							   ['.', '.', '◦', 'b', '.'],
-				 							   ['.', '.', '•', '.', '.']]):
+	def __init__(self, n = 5, current_state = [['B', '.', 'X', '.', '.'],
+				 							   ['.', 'X', 'O', 'B', '.'],
+				 							   ['.', 'B', 'O', '.', '.'],
+				 							   ['.', '.', 'O', 'B', '.'],
+				 							   ['.', '.', 'X', '.', '.']]):
 		self.n = n
 		self.current_state = current_state
 	def slow_heuristic(self):
@@ -440,17 +441,17 @@ class Test_case:
 		
 		for i in range(0, self.n):										#Loop that will go through each position of the current state and perform the heuristic.
 			for j in range(0, self.n):
-				if (self.current_state[i][j] == 'b'):					#Each box is worth 0 points.
+				if (self.current_state[i][j] == 'B'):					#Each box is worth 0 points.
 					max_matrix[i, j] = 0
 					min_matrix[i, j] = 0
 				elif (self.current_state[i][j] == '.'):					#Each empty position is worth 1 for the max player and -1 for the min player.
 					max_matrix[i, j] = 1
 					min_matrix[i, j] = -1
-				elif (self.current_state[i][j] == '◦'):					#Each white piece is worth 2 points.
+				elif (self.current_state[i][j] == 'O'):					#Each white piece is worth 2 points.
 					max_matrix[i, j] = 2
 					min_matrix[i, j] = 2
 					white_matrix[i, j] = True
-				elif (self.current_state[i][j] == '•'):					#Each black piece is worth -2 points.
+				elif (self.current_state[i][j] == 'X'):					#Each black piece is worth -2 points.
 					max_matrix[i, j] = -2
 					min_matrix[i ,j] = -2
 					black_matrix[i, j] = True
