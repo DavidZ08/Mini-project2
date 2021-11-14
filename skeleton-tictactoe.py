@@ -392,9 +392,9 @@ class Game:
 						print(F'Recommended move: x = {x}, y = {y}')
 					(x,y) = (0,0)
 					placeholder = self.input_move() 
-					if type(placeholder) == bool and player_x == self.HUMAN:
+					if type(placeholder) == bool and self.player_turn == 'X' and player_x == self.HUMAN:
 						player_x_flag = True
-					elif type(placeholder) == bool and player_o == self.HUMAN:
+					elif type(placeholder) == bool and self.player_turn == 'O' and player_o == self.HUMAN:
 						player_o_flag = True
 					else: 
 						(x,y) = placeholder
