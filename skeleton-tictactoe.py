@@ -525,4 +525,4 @@ def main():
 	# g.play(algo=Game.MINIMAX,player_x=Game.AI,player_o=Game.HUMAN)
 
 if __name__ == "__main__":
-	main()
+    main()
