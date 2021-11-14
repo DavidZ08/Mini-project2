@@ -346,8 +346,10 @@ class Game:
 	def play(self,algo=None,player_x=None,player_o=None):
 		player_x_flag = False
 		player_o_flag = False
-		if algo == None:
+		if self.a == True:
 			algo = self.ALPHABETA
+		elif self.a == False:
+			algo = self.MINIMAX
 		if self.play_mode == 1:
 			player_x = self.HUMAN
 			player_o = self.HUMAN
