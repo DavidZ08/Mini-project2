@@ -401,9 +401,9 @@ class Game:
 			if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
 						print(F'Evaluation time: {round(end - start, 7)}s')
 						print(F'Player {self.player_turn} under AI control plays: x = {x}, y = {y}') #prints immediately for AI player.
-						if (self.is_valid(x,y) == False) and self.player_turn == 'X' and (end - start) <= self.t and player_x == self.AI:
+						if (self.is_valid(x,y) == False) and self.player_turn == 'X' and (end - start) > self.t and player_x == self.AI:
 							player_x_flag = True
-						elif (self.is_valid(x,y) == False) and self.player_turn == 'O' and (end - start) <= self.t and  player_o == self.AI:
+						elif (self.is_valid(x,y) == False) and self.player_turn == 'O' and (end - start) > self.t and player_o == self.AI:
 							player_o_flag = True
 						else: 
 							self.current_state[x][y] = self.player_turn
