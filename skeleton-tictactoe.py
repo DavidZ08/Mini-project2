@@ -249,7 +249,7 @@ class Game:
 			self.player_turn = 'X'
 		return self.player_turn
 
-	def minimax(self, max_depth, depth, max=False):
+	def minimax(self, start_time, max_depth, depth, max=False):
 		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
 		# -1 - win for 'X'
@@ -262,6 +262,8 @@ class Game:
 		x = None
 		y = None
 		result = self.is_end()
+		if time.time() - start_time + 0.10 >= self.t:
+			return (self.slow_heuristic(), x, y)
 		if depth == max_depth:
 			return (self.slow_heuristic(), x, y)
 		depth += 1
@@ -276,14 +278,14 @@ class Game:
 				if self.current_state[i][j] == '.':
 					if max:
 						self.current_state[i][j] = 'O'
-						(v, _, _) = self.minimax(max_depth, depth, max=False)
+						(v, _, _) = self.minimax(start_time, max_depth, depth, max=False)
 						if v > value:
 							value = v
 							x = i
 							y = j
 					else:
 						self.current_state[i][j] = 'X'
-						(v, _, _) = self.minimax(max_depth, depth, max=True)
+						(v, _, _) = self.minimax(start_time, max_depth, depth, max=True)
 						if v < value:
 							value = v
 							x = i
@@ -291,7 +293,7 @@ class Game:
 					self.current_state[i][j] = '.'
 		return (value, x, y)
 
-	def alphabeta(self, max_depth, depth, alpha=-2, beta=2, max=False):
+	def alphabeta(self, start_time, max_depth, depth, alpha=-2, beta=2, max=False):
 		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
 		# -1 - win for 'X'
@@ -304,6 +306,8 @@ class Game:
 		x = None
 		y = None
 		result = self.is_end()
+		if time.time() - start_time + 0.10 >= self.t:
+			return (self.slow_heuristic(), x, y)
 		if depth == max_depth:
 			return (self.slow_heuristic(), x, y)
 		depth += 1
@@ -318,14 +322,14 @@ class Game:
 				if self.current_state[i][j] == '.':
 					if max:
 						self.current_state[i][j] = 'O'
-						(v, x, y) = self.alphabeta(max_depth, depth, alpha, beta, max=False)
+						(v, x, y) = self.alphabeta(start_time, max_depth, depth, alpha, beta, max=False)
 						if v > value:
 							value = v
 							x = i
 							y = j
 					else:
 						self.current_state[i][j] = 'X'
-						(v, x, y) = self.alphabeta(max_depth, depth, alpha, beta, max=True)
+						(v, x, y) = self.alphabeta(start_time, max_depth, depth, alpha, beta, max=True)
 						if v < value:
 							value = v
 							x = i
@@ -375,14 +379,14 @@ class Game:
 			start = time.time()
 			if algo == self.MINIMAX:
 				if self.player_turn == 'X':
-					(_, x, y) = self.minimax(max=False, max_depth=self.d2, depth=0)
+					(_, x, y) = self.minimax(start_time=start, max=False, max_depth=self.d2, depth=0)
 				else:
-					(_, x, y) = self.minimax(max=True, max_depth=self.d1, depth=0)
+					(_, x, y) = self.minimax(start_time=start, max=True, max_depth=self.d1, depth=0)
 			else: # algo == self.ALPHABETA
 				if self.player_turn == 'X':
-					(m, x, y) = self.alphabeta(max=False, max_depth=self.d2, depth=0)
+					(m, x, y) = self.alphabeta(start_time=start, max=False, max_depth=self.d2, depth=0)
 				else:
-					(m, x, y) = self.alphabeta(max=True, max_depth=self.d1, depth=0)
+					(m, x, y) = self.alphabeta(start_time=start, max=True, max_depth=self.d1, depth=0)
 			end = time.time()
 			if (self.player_turn == 'X' and player_x == self.HUMAN) or (self.player_turn == 'O' and player_o == self.HUMAN):
 					if self.recommend:
@@ -399,9 +403,9 @@ class Game:
 			if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
 						print(F'Evaluation time: {round(end - start, 7)}s')
 						print(F'Player {self.player_turn} under AI control plays: x = {x}, y = {y}') #prints immediately for AI player.
-						if (self.is_valid(x,y) == False) and player_x == self.AI:
+						if (self.is_valid(x,y) == False) and self.player_turn == 'X' and (end - start) > self.t and player_x == self.AI:
 							player_x_flag = True
-						elif (self.is_valid(x,y) == False) and player_o == self.AI:
+						elif (self.is_valid(x,y) == False) and self.player_turn == 'O' and (end - start) > self.t and player_o == self.AI:
 							player_o_flag = True
 						else: 
 							self.current_state[x][y] = self.player_turn
@@ -515,8 +519,8 @@ class Test_case:
 		
 def main():
 	# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
-	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 2, 2, 5, False, 4,recommend=True)
-	g.draw_board()
+	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 5, 5, 5, False, 4,recommend=True)
+	# g.draw_board()
 	# case = Test_case()
 	# print(case.slow_heuristic())	
 	g.play()
