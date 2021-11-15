@@ -119,8 +119,6 @@ class Game:
 		print()
 		
 	def is_valid(self, px, py):
-		print(px)
-		print(py)
 		if px < 0 or px > self.n-1 or py < 0 or py > self.n-1:		
 			print("This move is out of bounds!")
 			return False
