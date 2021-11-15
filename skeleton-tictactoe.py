@@ -712,5 +712,6 @@ def main():
 	scoreboard_write(g7,5)
 	scoreboard_write(g8,5)
 
+
 if __name__ == "__main__":
     main()
