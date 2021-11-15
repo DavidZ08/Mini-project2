@@ -42,10 +42,6 @@ class Game:
 		print()
 		
 	def is_valid(self, px, py):
-		alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'G': 6, 'H' : 7, 'I' : 8, 'J' : 9, 'K' : 10, 'L' : 11, 'M' : 12, 'B' : 13, 'O' : 14, 'P' : 15, 'Q' : 16,
-	 		'R': 17, 'S': 18, 'T': 19, 'U': 20, 'V' : 21, 'W' : 22, 'X': 23, 'Y': 24, 'Z': 25}
-		px = alphabet_coordinates[px]
-		py = int(py)
 		if px < 0 or px > self.n-1 or py < 0 or py > self.n-1:		
 			print("This move is out of bounds!")
 			return False
@@ -188,7 +184,7 @@ class Game:
 			print(F'Player {self.player_turn}, enter your move:')
 			px = input('Enter the column (A... nth letter) of the move.')
 			py = int(input('Enter the row of your move (0...n-1) of the move.'))
-			if self.is_valid(px, py):
+			if self.is_valid(py, alphabet_coordinates[px]):
 				return (py, alphabet_coordinates[px])
 			else:
 				attempt_counter += 1
@@ -202,7 +198,7 @@ class Game:
 			self.player_turn = 'X'
 		return self.player_turn
 
-	def minimax(self, start_time, max_depth, depth, max=False):
+	def minimax(self, player, start_time, max_depth, depth, max=True):
 		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
 		# -1 - win for 'X'
@@ -216,9 +212,15 @@ class Game:
 		x = None
 		y = None
 		if depth == max_depth:
-			return (self.slow_heuristic(), x, y)
-		if time.time() - start_time + 0.20 >= self.t:
-			return (self.slow_heuristic(), x, y)
+			if player == 'O':
+				return (self.slow_heuristic(), x, y)
+			else:
+				return (self.sophisticated_heuristic(), x, y)
+		if time.time() - start_time + 0.50 >= self.t:
+			if player == 'O':
+				return (self.slow_heuristic(), x, y)
+			else:
+				return (self.sophisticated_heuristic(), x, y)
 		depth += 1
 		result = self.is_end()
 		if result == 'X':
@@ -232,14 +234,14 @@ class Game:
 				if self.current_state[i][j] == '.':
 					if max:
 						self.current_state[i][j] = 'O'
-						(v, _, _) = self.minimax(start_time, max_depth, depth, max=False)
+						(v, _, _) = self.minimax(player, start_time, max_depth, depth, max=False)
 						if v > value:
 							value = v
 							x = i
 							y = j
 					else:
 						self.current_state[i][j] = 'X'
-						(v, _, _) = self.minimax(start_time, max_depth, depth, max=True)
+						(v, _, _) = self.minimax(player, start_time, max_depth, depth, max=True)
 						if v < value:
 							value = v
 							x = i
@@ -247,7 +249,7 @@ class Game:
 					self.current_state[i][j] = '.'
 		return (value, x, y)
 
-	def alphabeta(self, start_time, max_depth, depth, alpha=-2, beta=2, max=False):
+	def alphabeta(self, player, start_time, max_depth, depth, alpha=-200, beta=200, max=True):
 		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
 		# -1 - win for 'X'
@@ -261,9 +263,15 @@ class Game:
 		x = None
 		y = None
 		if depth == max_depth:
-			return (self.slow_heuristic(), x, y)
-		if time.time() - start_time + 0.20 >= self.t:
-			return (self.slow_heuristic(), x, y)
+			if player == 'O':
+				return (self.slow_heuristic(), x, y)
+			else:
+				return (self.sophisticated_heuristic(), x, y)
+		if time.time() - start_time + 0.50 >= self.t:
+			if player == 'O':
+				return (self.slow_heuristic(), x, y)
+			else:
+				return (self.sophisticated_heuristic(), x, y)
 		depth += 1
 		result = self.is_end()
 		if result == 'X':
@@ -277,14 +285,14 @@ class Game:
 				if self.current_state[i][j] == '.':
 					if max:
 						self.current_state[i][j] = 'O'
-						(v, _, _) = self.alphabeta(start_time, max_depth, depth, alpha, beta, max=False)
+						(v, _, _) = self.alphabeta(player, start_time, max_depth, depth, alpha, beta, max=False)
 						if v > value:
 							value = v
 							x = i
 							y = j
 					else:
 						self.current_state[i][j] = 'X'
-						(v, _, _) = self.alphabeta(start_time, max_depth, depth, alpha, beta, max=True)
+						(v, _, _) = self.alphabeta(player, start_time, max_depth, depth, alpha, beta, max=True)
 						if v < value:
 							value = v
 							x = i
@@ -303,8 +311,7 @@ class Game:
 		return (value, x, y)
 
 	def play(self,algo=None,player_x=None,player_o=None):
-		if algo == None:
-
+		if self.a == True:
 			algo = self.ALPHABETA
 		elif self.a == False:
 			algo = self.MINIMAX
@@ -327,14 +334,14 @@ class Game:
 			start = time.time()
 			if algo == self.MINIMAX:
 				if self.player_turn == 'X':
-					(_, x, y) = self.minimax(start_time=start, max=False, max_depth=self.d2, depth=-1)
+					(_, x, y) = self.minimax(player = 'X', start_time=start, max=False, max_depth=self.d2, depth=-1)
 				else:
-					(_, x, y) = self.minimax(start_time=start, max=True, max_depth=self.d1, depth=-1)
+					(_, x, y) = self.minimax(player = 'O', start_time=start, max=True, max_depth=self.d1, depth=-1)
 			else: # algo == self.ALPHABETA
 				if self.player_turn == 'X':
-					(m, x, y) = self.alphabeta(start_time=start, max=False, max_depth=self.d2, depth=-1)
+					(m, x, y) = self.alphabeta(player = 'X', start_time=start, max=False, max_depth=self.d2, depth=-1)
 				else:
-					(m, x, y) = self.alphabeta(start_time=start, max=True, max_depth=self.d1, depth=-1)
+					(m, x, y) = self.alphabeta(player = 'O', start_time=start, max=True, max_depth=self.d1, depth=-1)
 			end = time.time()
 			if (self.player_turn == 'X' and player_x == self.HUMAN):
 				if self.recommend:
@@ -413,9 +420,9 @@ class Game:
 				min_score_matrix[i, j] = np.sum(min_region) - min_matrix[i, j]
 		max_final_score_matrix = np.where(white_matrix, max_score_matrix, 0)
 		min_final_score_matrix = np.where(black_matrix, min_score_matrix, 0)
-		return np.sum(max_final_score_matrix) + np.sum(min_final_score_matrix)
-	
-	def sophisticated_heuristic(self):		#Returns the sum of the all the scores in both max and min score matrices.
+		return np.sum(max_final_score_matrix) + np.sum(min_final_score_matrix)		#Returns the sum of the all the scores in both max and min score matrices.
+
+	def sophisticated_heuristic(self):
 		# Available wins for player 1 and player 2
 		avail_p1 = avail_p2 = 0
 		board = np.array(self.current_state)
@@ -485,74 +492,6 @@ class Game:
 				avail_p2 += np.count_nonzero(diagonal_prog_ne == -1) ** 2
 
 		return avail_p1 - avail_p2
-
-	
-
-#Class used to test my heurisic while we build the functional game class.		
-class Test_case:
-	def __init__(self, n = 5, current_state = [['B', '.', 'X', '.', '.'],
-				 							   ['.', 'X', 'O', 'B', '.'],
-				 							   ['.', 'B', 'O', '.', '.'],
-				 							   ['.', '.', 'O', 'B', '.'],
-				 							   ['.', '.', 'X', '.', '.']]):
-		self.n = n
-		self.current_state = current_state
-	def slow_heuristic(self):
-		start = time.time()
-		max_matrix = np.zeros((self.n,self.n))							#Matrix of zeros used to evaluate the max player's score for each of its pieces.
-		min_matrix = np.zeros((self.n,self.n))							#Matrix of zeros used to evaluate the min player's score for each of its pieces.
-		white_matrix = np.zeros((self.n,self.n), dtype=bool)			#Boolean matrix to indentify the white pieces.
-		black_matrix = np.zeros((self.n,self.n), dtype=bool)			#Boolean matrix to indentify the black pieces.
-		max_score_matrix = np.zeros((self.n,self.n))					#Matrix for max used to store the sum of adjacent values.
-		min_score_matrix = np.zeros((self.n,self.n))					#Matrix for min used to store the sum of adjacent values.
-		max_final_score_matrix = np.zeros((self.n,self.n))				#Matrix used to store the final score of the pieces of max.
-		min_final_score_matrix = np.zeros((self.n,self.n))				#Matrix used to store the final score of the pieces of max.
-		
-		for i in range(0, self.n):										#Loop that will go through each position of the current state and perform the heuristic.
-			for j in range(0, self.n):
-				if (self.current_state[i][j] == 'B'):					#Each box is worth 0 points.
-					max_matrix[i, j] = 0
-					min_matrix[i, j] = 0
-				elif (self.current_state[i][j] == '.'):					#Each empty position is worth 1 for the max player and -1 for the min player.
-					max_matrix[i, j] = 1
-					min_matrix[i, j] = -1
-				elif (self.current_state[i][j] == 'O'):					#Each white piece is worth 2 points.
-					max_matrix[i, j] = 2
-					min_matrix[i, j] = 2
-					white_matrix[i, j] = True
-				elif (self.current_state[i][j] == 'X'):					#Each black piece is worth -2 points.
-					max_matrix[i, j] = -2
-					min_matrix[i ,j] = -2
-					black_matrix[i, j] = True
-		# print("MAX_MATRIX")
-		# print(max_matrix)
-		# print("WHITE_MATRIX")
-		# print(white_matrix)
-		# print("MIN_MATRIX")
-		# print(min_matrix)
-		# print("BLACK_MATRIX")
-		# print(black_matrix)
-		for i in range(0, self.n):										#Loop that will set the values of the pieces to the sum of the adjacent values.
-			for j in range(0, self.n):
-				max_region = max_matrix[max(0, i-1) : i+2,
-                    					max(0, j-1) : j+2]
-				max_score_matrix[i, j] = np.sum(max_region) - max_matrix[i, j]
-				min_region = min_matrix[max(0, i-1) : i+2,
-                    					max(0, j-1) : j+2]
-				min_score_matrix[i, j] = np.sum(min_region) - min_matrix[i, j]
-		# print("MAX_SCORE_MATRIX")
-		# print(max_score_matrix)
-		# print("MIN_SCORE_MATRIX")
-		# print(min_score_matrix)
-		max_final_score_matrix = np.where(white_matrix, max_score_matrix, 0)	
-		min_final_score_matrix = np.where(black_matrix, min_score_matrix, 0)
-		# print("MAX_FINAL_SCORE_MATRIX")
-		# print(max_final_score_matrix)
-		# print("MIN_FINAL_SCORE_MATRIX")
-		# print(min_final_score_matrix)
-		end = time.time()
-		print(end - start)
-		return np.sum(max_final_score_matrix) + np.sum(min_final_score_matrix)		#Returns the sum of the all the scores in both max and min score matrices.
 		
 def scoreboard_write(game, r):
 	score_file = open("scoreboard.txt", "a")
