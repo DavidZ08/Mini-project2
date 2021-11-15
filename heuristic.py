@@ -1,5 +1,5 @@
 #New Heuristic - now the slower one
-
+import numpy as np
 ## This heuristic calculates the total possible wins the first player can have and subtracts it from the total possible wins 
 ## the second player can have. In counts how close each player is to completing a win and adds it to their total possible wins
 

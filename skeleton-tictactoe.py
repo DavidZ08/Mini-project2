@@ -3,7 +3,7 @@
 import time
 import sys
 import numpy as np
-
+import heuristic
 
 def int_extraction(question, bound1, bound2):							#Method that will be used to prompt the user for an integer and check that it is within bounds.
 	while True:
@@ -273,7 +273,7 @@ class Game:
 			self.player_turn = 'X'
 		return self.player_turn
 
-	def minimax(self, start_time, max_depth, depth, max=False):
+	def minimax(self, player, start_time, max_depth, depth, max=False):
 		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
 		# -1 - win for 'X'
@@ -287,9 +287,15 @@ class Game:
 		x = None
 		y = None
 		if depth == max_depth:
-			return (self.slow_heuristic(), x, y)
-		if time.time() - start_time + 0.20 >= self.t:
-			return (self.slow_heuristic(), x, y)
+			if player == 'O':
+				return (self.slow_heuristic(), x, y)
+			else:
+				return (heuristic.sophisticated_heuristic(self), x, y)
+		if time.time() - start_time + 0.40 >= self.t:
+			if player == 'O':
+				return (self.slow_heuristic(), x, y)
+			else:
+				return (heuristic.sophisticated_heuristic(self), x, y)
 		depth += 1
 		result = self.is_end()
 		if result == 'X':
@@ -303,14 +309,14 @@ class Game:
 				if self.current_state[i][j] == '.':
 					if max:
 						self.current_state[i][j] = 'O'
-						(v, _, _) = self.minimax(start_time, max_depth, depth, max=False)
+						(v, _, _) = self.minimax(player, start_time, max_depth, depth, max=False)
 						if v > value:
 							value = v
 							x = i
 							y = j
 					else:
 						self.current_state[i][j] = 'X'
-						(v, _, _) = self.minimax(start_time, max_depth, depth, max=True)
+						(v, _, _) = self.minimax(player, start_time, max_depth, depth, max=True)
 						if v < value:
 							value = v
 							x = i
@@ -318,7 +324,7 @@ class Game:
 					self.current_state[i][j] = '.'
 		return (value, x, y)
 
-	def alphabeta(self, start_time, max_depth, depth, alpha=-2, beta=2, max=False):
+	def alphabeta(self, player, start_time, max_depth, depth, alpha=-2, beta=2, max=False):
 		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
 		# -1 - win for 'X'
@@ -332,9 +338,15 @@ class Game:
 		x = None
 		y = None
 		if depth == max_depth:
-			return (self.slow_heuristic(), x, y)
-		if time.time() - start_time + 0.20 >= self.t:
-			return (self.slow_heuristic(), x, y)
+			if player == 'O':
+				return (self.slow_heuristic(), x, y)
+			else:
+				return (heuristic.sophisticated_heuristic(self), x, y)
+		if time.time() - start_time + 0.40 >= self.t:
+			if player == 'O':
+				return (self.slow_heuristic(), x, y)
+			else:
+				return (heuristic.sophisticated_heuristic(self), x, y)
 		depth += 1
 		result = self.is_end()
 		if result == 'X':
@@ -348,14 +360,14 @@ class Game:
 				if self.current_state[i][j] == '.':
 					if max:
 						self.current_state[i][j] = 'O'
-						(v, _, _) = self.alphabeta(start_time, max_depth, depth, alpha, beta, max=False)
+						(v, _, _) = self.alphabeta(player, start_time, max_depth, depth, alpha, beta, max=False)
 						if v > value:
 							value = v
 							x = i
 							y = j
 					else:
 						self.current_state[i][j] = 'X'
-						(v, _, _) = self.alphabeta(start_time, max_depth, depth, alpha, beta, max=True)
+						(v, _, _) = self.alphabeta(player, start_time, max_depth, depth, alpha, beta, max=True)
 						if v < value:
 							value = v
 							x = i
@@ -398,14 +410,14 @@ class Game:
 			start = time.time()
 			if algo == self.MINIMAX:
 				if self.player_turn == 'X':
-					(_, x, y) = self.minimax(start_time=start, max=False, max_depth=self.d2, depth=-1)
+					(_, x, y) = self.minimax(player = 'X', start_time=start, max=False, max_depth=self.d2, depth=-1)
 				else:
-					(_, x, y) = self.minimax(start_time=start, max=True, max_depth=self.d1, depth=-1)
+					(_, x, y) = self.minimax(player = 'O', start_time=start, max=True, max_depth=self.d1, depth=-1)
 			else: # algo == self.ALPHABETA
 				if self.player_turn == 'X':
-					(m, x, y) = self.alphabeta(start_time=start, max=False, max_depth=self.d2, depth=-1)
+					(m, x, y) = self.alphabeta(player = 'X', start_time=start, max=False, max_depth=self.d2, depth=-1)
 				else:
-					(m, x, y) = self.alphabeta(start_time=start, max=True, max_depth=self.d1, depth=-1)
+					(m, x, y) = self.alphabeta(player = 'O', start_time=start, max=True, max_depth=self.d1, depth=-1)
 			end = time.time()
 			if (self.player_turn == 'X' and player_x == self.HUMAN):
 				if self.recommend:
@@ -488,7 +500,7 @@ class Game:
 				
 def main():
 	# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
-	g = Game(8, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 6, 6, 5, False, 3,recommend=True)
+	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 10, 10, 5, False, 4, recommend=True)
 	# print(blocposition_extraction(5, 1))
 	# g.draw_board()
 	# case = Test_case()
