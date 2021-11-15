@@ -491,10 +491,13 @@ class Game:
 				avail_p2 += np.count_nonzero(diagonal_prog_ne == -1) ** 2
 
 		return avail_p1 - avail_p2
+	
+	def game_trace(self):
 		
+
 def main():
 	# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
-	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 10, 10, 5, True, 4, recommend=True)
+	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 6, 6, 5, True, 4, recommend=True)
 	# print(blocposition_extraction(5, 1))
 	# g.draw_board()
 	# case = Test_case()
