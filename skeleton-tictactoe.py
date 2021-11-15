@@ -380,7 +380,7 @@ class Game:
                         if self.player_turn == 'O' and (end - start) > self.t:
                             print("Player O loses because he exceeded the time limit")
                             return
-            print(self.current_state)
+
             self.current_state[x][y] = self.player_turn
             self.switch_player()
 
