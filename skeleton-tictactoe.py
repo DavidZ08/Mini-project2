@@ -181,7 +181,7 @@ class Game:
 			print(F'Player {self.player_turn}, enter your move:')
 			px = input('Enter the column (A... nth letter) of the move.')
 			py = int(input('Enter the row of your move (0...n-1) of the move.'))
-			if self.is_valid(px, alphabet_coordinates[py]):
+			if self.is_valid(py, alphabet_coordinates[px]):
 				return (py, alphabet_coordinates[px])
 			else:
 				attempt_counter += 1
@@ -195,7 +195,7 @@ class Game:
 			self.player_turn = 'X'
 		return self.player_turn
 
-	def minimax(self, player, start_time, max_depth, depth, max=False):
+	def minimax(self, player, start_time, max_depth, depth, max=True):
 		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
 		# -1 - win for 'X'
@@ -246,7 +246,7 @@ class Game:
 					self.current_state[i][j] = '.'
 		return (value, x, y)
 
-	def alphabeta(self, player, start_time, max_depth, depth, alpha=-2, beta=2, max=False):
+	def alphabeta(self, player, start_time, max_depth, depth, alpha=-200, beta=200, max=True):
 		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
 		# -1 - win for 'X'
