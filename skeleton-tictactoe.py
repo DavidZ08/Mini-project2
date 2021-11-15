@@ -119,6 +119,8 @@ class Game:
 		print()
 		
 	def is_valid(self, px, py):
+		print(px)
+		print(py)
 		if px < 0 or px > self.n-1 or py < 0 or py > self.n-1:		
 			print("This move is out of bounds!")
 			return False
@@ -252,7 +254,7 @@ class Game:
 		return self.result
 
 	def input_move(self):
-		alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'G': 6, 'H' : 7, 'I' : 8, 'J' : 9, 'K' : 10, 'L' : 11, 'M' : 12, 'B' : 13, 'O' : 14, 'P' : 15, 'Q' : 16,
+		alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'G': 6, 'H' : 7, 'I' : 8, 'J' : 9, 'K' : 10, 'L' : 11, 'M' : 12, 'N' : 13, 'O' : 14, 'P' : 15, 'Q' : 16,
 	 		'R': 17, 'S': 18, 'T': 19, 'U': 20, 'V' : 21, 'W' : 22, 'X': 23, 'Y': 24, 'Z': 25}
 		attempt_counter = 0
 		while True:
@@ -485,77 +487,10 @@ class Game:
 		max_final_score_matrix = np.where(white_matrix, max_score_matrix, 0)
 		min_final_score_matrix = np.where(black_matrix, min_score_matrix, 0)
 		return np.sum(max_final_score_matrix) + np.sum(min_final_score_matrix)		#Returns the sum of the all the scores in both max and min score matrices.
-		
-#Class used to test my heurisic while we build the functional game class.		
-class Test_case:
-	def __init__(self, n = 5, current_state = [['B', '.', 'X', '.', '.'],
-				 							   ['.', 'X', 'O', 'B', '.'],
-				 							   ['.', 'B', 'O', '.', '.'],
-				 							   ['.', '.', 'O', 'B', '.'],
-				 							   ['.', '.', 'X', '.', '.']]):
-		self.n = n
-		self.current_state = current_state
-	def slow_heuristic(self):
-		start = time.time()
-		max_matrix = np.zeros((self.n,self.n))							#Matrix of zeros used to evaluate the max player's score for each of its pieces.
-		min_matrix = np.zeros((self.n,self.n))							#Matrix of zeros used to evaluate the min player's score for each of its pieces.
-		white_matrix = np.zeros((self.n,self.n), dtype=bool)			#Boolean matrix to indentify the white pieces.
-		black_matrix = np.zeros((self.n,self.n), dtype=bool)			#Boolean matrix to indentify the black pieces.
-		max_score_matrix = np.zeros((self.n,self.n))					#Matrix for max used to store the sum of adjacent values.
-		min_score_matrix = np.zeros((self.n,self.n))					#Matrix for min used to store the sum of adjacent values.
-		max_final_score_matrix = np.zeros((self.n,self.n))				#Matrix used to store the final score of the pieces of max.
-		min_final_score_matrix = np.zeros((self.n,self.n))				#Matrix used to store the final score of the pieces of max.
-		
-		for i in range(0, self.n):										#Loop that will go through each position of the current state and perform the heuristic.
-			for j in range(0, self.n):
-				if (self.current_state[i][j] == 'B'):					#Each box is worth 0 points.
-					max_matrix[i, j] = 0
-					min_matrix[i, j] = 0
-				elif (self.current_state[i][j] == '.'):					#Each empty position is worth 1 for the max player and -1 for the min player.
-					max_matrix[i, j] = 1
-					min_matrix[i, j] = -1
-				elif (self.current_state[i][j] == 'O'):					#Each white piece is worth 2 points.
-					max_matrix[i, j] = 2
-					min_matrix[i, j] = 2
-					white_matrix[i, j] = True
-				elif (self.current_state[i][j] == 'X'):					#Each black piece is worth -2 points.
-					max_matrix[i, j] = -2
-					min_matrix[i ,j] = -2
-					black_matrix[i, j] = True
-		# print("MAX_MATRIX")
-		# print(max_matrix)
-		# print("WHITE_MATRIX")
-		# print(white_matrix)
-		# print("MIN_MATRIX")
-		# print(min_matrix)
-		# print("BLACK_MATRIX")
-		# print(black_matrix)
-		for i in range(0, self.n):										#Loop that will set the values of the pieces to the sum of the adjacent values.
-			for j in range(0, self.n):
-				max_region = max_matrix[max(0, i-1) : i+2,
-                    					max(0, j-1) : j+2]
-				max_score_matrix[i, j] = np.sum(max_region) - max_matrix[i, j]
-				min_region = min_matrix[max(0, i-1) : i+2,
-                    					max(0, j-1) : j+2]
-				min_score_matrix[i, j] = np.sum(min_region) - min_matrix[i, j]
-		# print("MAX_SCORE_MATRIX")
-		# print(max_score_matrix)
-		# print("MIN_SCORE_MATRIX")
-		# print(min_score_matrix)
-		max_final_score_matrix = np.where(white_matrix, max_score_matrix, 0)	
-		min_final_score_matrix = np.where(black_matrix, min_score_matrix, 0)
-		# print("MAX_FINAL_SCORE_MATRIX")
-		# print(max_final_score_matrix)
-		# print("MIN_FINAL_SCORE_MATRIX")
-		# print(min_final_score_matrix)
-		end = time.time()
-		print(end - start)
-		return np.sum(max_final_score_matrix) + np.sum(min_final_score_matrix)		#Returns the sum of the all the scores in both max and min score matrices.
-		
-		
+				
 def main():
 	# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
-	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 6, 6, 5, False, 3,recommend=True)
+	g = Game(8, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 6, 6, 5, False, 3,recommend=True)
 	# print(blocposition_extraction(5, 1))
 	# g.draw_board()
 	# case = Test_case()
