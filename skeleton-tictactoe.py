@@ -18,8 +18,9 @@ class Game:
 	t = 0
 	a = True
 	play_mode = 0
+	slow_heuristic_wins = 0
+	sophisiticated_heuristic_wins = 0
 
-	#hello
 	def __init__(self, n, b, s, coordinates_list, d1, d2, t, a, play_mode, recommend = True):
 		self.n, self.b, self.s, self.coordinates_list, self.d1, self.d2, self.t, self.a, self.play_mode = n, b, s, coordinates_list, d1, d2, t, a, play_mode
 		self.initialize_game()
@@ -169,8 +170,10 @@ class Game:
 		# Printing the appropriate message if the game has ended
 		if self.result != None:
 			if self.result == 'X':
+				self.sophisticated_heuristic_wins += 1
 				print('The winner is X!')
 			elif self.result == 'O':
+				self.slower_heuristic_wins += 1
 				print('The winner is O!')
 			elif self.result == '.':
 				print("It's a tie!")
@@ -178,7 +181,7 @@ class Game:
 		return self.result
 
 	def input_move(self):
-		alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'G': 6, 'H' : 7, 'I' : 8, 'J' : 9, 'K' : 10, 'L' : 11, 'M' : 12, 'N' : 13, 'O' : 14, 'P' : 15, 'Q' : 16,
+		alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'G': 6, 'H' : 7, 'I' : 8, 'J' : 9, 'K' : 10, 'L' : 11, 'M' : 12, 'B' : 13, 'O' : 14, 'P' : 15, 'Q' : 16,
 	 		'R': 17, 'S': 18, 'T': 19, 'U': 20, 'V' : 21, 'W' : 22, 'X': 23, 'Y': 24, 'Z': 25}
 		attempt_counter = 0
 		while True:
@@ -410,79 +413,80 @@ class Game:
 				min_score_matrix[i, j] = np.sum(min_region) - min_matrix[i, j]
 		max_final_score_matrix = np.where(white_matrix, max_score_matrix, 0)
 		min_final_score_matrix = np.where(black_matrix, min_score_matrix, 0)
-		return np.sum(max_final_score_matrix) + np.sum(min_final_score_matrix)		#Returns the sum of the all the scores in both max and min score matrices.
-
-def sophisticated_heuristic(self):
-
-	# Available wins for player 1 and player 2
-	avail_p1 = avail_p2 = 0
-	board = np.array(self.current_state)
-
-	# Returns the board as a boolean ndarray where the true values are assigned to the empty position as well as the respective players
-	# symbols on the board
-	board_p1 = (board == '.') | (board == 'X')
-	board_p2 = (board == '.') | (board == 'O')
-
-	# Overlapping sub arrays of the board with their lengths the size of the win conditions
-	horizontal_blocs_p1 = np.lib.stride_tricks.sliding_window_view(board_p1, (1, 3)).reshape(-1, 3)
-	vertical_blocs_p1 = np.lib.stride_tricks.sliding_window_view(board_p1, (3, 1)).reshape(-1, 3)
-	diagonal_blocs_p1 = np.lib.stride_tricks.sliding_window_view(board_p1, (3, 3)).reshape(-1, 3, 3)
-
-	horizontal_blocs_p2 = np.lib.stride_tricks.sliding_window_view(board_p2, (1, 3)).reshape(-1, 3)
-	vertical_blocs_p2 = np.lib.stride_tricks.sliding_window_view(board_p2, (3, 1)).reshape(-1, 3)
-	diagonal_blocs_p2 = np.lib.stride_tricks.sliding_window_view(board_p2, (3, 3)).reshape(-1, 3, 3)
-
-	# seperates the player's positions and empty positions - Used later to count how close each player is to a win
-	horizontal_prog = (horizontal_blocs_p1+1) - (horizontal_blocs_p2+1)
-	vertical_prog = (vertical_blocs_p1+1) - (vertical_blocs_p2+1)
-
-	# Iterates through the overlapping sub arrays containing the vertical and horizontal positions and calculates their total score
-	for i in range(len(horizontal_blocs_p1)):
-		if horizontal_blocs_p1[i].all():
-			avail_p1 += 1
-			avail_p1 += np.count_nonzero(horizontal_prog[i] == 1) ** 2
-		if vertical_blocs_p1[i].all():
-			avail_p1 += 1
-			avail_p1 += np.count_nonzero(vertical_prog[i] == 1) ** 2
-
-		if horizontal_blocs_p2[i].all():
-			avail_p2 += 1
-			avail_p2 += np.count_nonzero(horizontal_prog[i] == -1) ** 2
-
-		if vertical_blocs_p2[i].all():
-			avail_p2 += 1
-			avail_p2 += np.count_nonzero(vertical_prog[i] == -1) ** 2
+		return np.sum(max_final_score_matrix) + np.sum(min_final_score_matrix)
 	
-	# Iterates through the overlapping sub arrays containing the diagonal positions and calculates their total score
-	for s in range(len(diagonal_blocs_p1)):
+	def sophisticated_heuristic(self):		#Returns the sum of the all the scores in both max and min score matrices.
+		# Available wins for player 1 and player 2
+		avail_p1 = avail_p2 = 0
+		board = np.array(self.current_state)
+
+		# Returns the board as a boolean ndarray where the true values are assigned to the empty position as well as the respective players
+		# symbols on the board
+		board_p1 = (board == '.') | (board == 'X')
+		board_p2 = (board == '.') | (board == 'O')
+
+		# Overlapping sub arrays of the board with their lengths the size of the win conditions
+		horizontal_blocs_p1 = np.lib.stride_tricks.sliding_window_view(board_p1, (1, 3)).reshape(-1, 3)
+		vertical_blocs_p1 = np.lib.stride_tricks.sliding_window_view(board_p1, (3, 1)).reshape(-1, 3)
+		diagonal_blocs_p1 = np.lib.stride_tricks.sliding_window_view(board_p1, (3, 3)).reshape(-1, 3, 3)
+
+		horizontal_blocs_p2 = np.lib.stride_tricks.sliding_window_view(board_p2, (1, 3)).reshape(-1, 3)
+		vertical_blocs_p2 = np.lib.stride_tricks.sliding_window_view(board_p2, (3, 1)).reshape(-1, 3)
+		diagonal_blocs_p2 = np.lib.stride_tricks.sliding_window_view(board_p2, (3, 3)).reshape(-1, 3, 3)
+
+		# seperates the player's positions and empty positions - Used later to count how close each player is to a win
+		horizontal_prog = (horizontal_blocs_p1+1) - (horizontal_blocs_p2+1)
+		vertical_prog = (vertical_blocs_p1+1) - (vertical_blocs_p2+1)
+
+		# Iterates through the overlapping sub arrays containing the vertical and horizontal positions and calculates their total score
+		for i in range(len(horizontal_blocs_p1)):
+			if horizontal_blocs_p1[i].all():
+				avail_p1 += 1
+				avail_p1 += np.count_nonzero(horizontal_prog[i] == 1) ** 2
+			if vertical_blocs_p1[i].all():
+				avail_p1 += 1
+				avail_p1 += np.count_nonzero(vertical_prog[i] == 1) ** 2
+
+			if horizontal_blocs_p2[i].all():
+				avail_p2 += 1
+				avail_p2 += np.count_nonzero(horizontal_prog[i] == -1) ** 2
+
+			if vertical_blocs_p2[i].all():
+				avail_p2 += 1
+				avail_p2 += np.count_nonzero(vertical_prog[i] == -1) ** 2
 		
-		# nw = north-west, ne = north-east
-		nw_p1 = np.diagonal(diagonal_blocs_p1[s])
-		ne_p1 = np.diagonal(np.fliplr(diagonal_blocs_p1[s]))
+		# Iterates through the overlapping sub arrays containing the diagonal positions and calculates their total score
+		for s in range(len(diagonal_blocs_p1)):
+			
+			# nw = north-west, ne = north-east
+			nw_p1 = np.diagonal(diagonal_blocs_p1[s])
+			ne_p1 = np.diagonal(np.fliplr(diagonal_blocs_p1[s]))
 
-		nw_p2 = np.diagonal(diagonal_blocs_p2[s])
-		ne_p2 = np.diagonal(np.fliplr(diagonal_blocs_p2[s]))
+			nw_p2 = np.diagonal(diagonal_blocs_p2[s])
+			ne_p2 = np.diagonal(np.fliplr(diagonal_blocs_p2[s]))
 
-		diagonal_prog_nw = (nw_p1+1) - (nw_p2+1)
-		diagonal_prog_ne = (ne_p1+1) - (ne_p2+1)
+			diagonal_prog_nw = (nw_p1+1) - (nw_p2+1)
+			diagonal_prog_ne = (ne_p1+1) - (ne_p2+1)
 
-		if nw_p1.all():
-			avail_p1 += 1
-			avail_p1 += np.count_nonzero(diagonal_prog_nw == 1) ** 2
+			if nw_p1.all():
+				avail_p1 += 1
+				avail_p1 += np.count_nonzero(diagonal_prog_nw == 1) ** 2
 
-		if ne_p1.all():
-			avail_p1 += 1
-			avail_p1 += np.count_nonzero(diagonal_prog_ne == 1) ** 2
+			if ne_p1.all():
+				avail_p1 += 1
+				avail_p1 += np.count_nonzero(diagonal_prog_ne == 1) ** 2
 
-		if nw_p2.all():
-			avail_p2 += 1
-			avail_p2 += np.count_nonzero(diagonal_prog_nw == -1) ** 2
+			if nw_p2.all():
+				avail_p2 += 1
+				avail_p2 += np.count_nonzero(diagonal_prog_nw == -1) ** 2
 
-		if ne_p2.all():
-			avail_p2 += 1
-			avail_p2 += np.count_nonzero(diagonal_prog_ne == -1) ** 2
+			if ne_p2.all():
+				avail_p2 += 1
+				avail_p2 += np.count_nonzero(diagonal_prog_ne == -1) ** 2
 
-	return avail_p1 - avail_p2
+		return avail_p1 - avail_p2
+
+	
 
 #Class used to test my heurisic while we build the functional game class.		
 class Test_case:
@@ -550,15 +554,84 @@ class Test_case:
 		print(end - start)
 		return np.sum(max_final_score_matrix) + np.sum(min_final_score_matrix)		#Returns the sum of the all the scores in both max and min score matrices.
 		
-		
+def scoreboard_write(game, r):
+	score_file = open("scoreboard.txt", "a")
+	score_file.write("1. Parameters of the game: \n")
+	score_file.write("n = ")
+	score_file.write(game.n)
+	score_file.write("\t")
+	score_file.write("b = ")
+	score_file.write(game.b)
+	score_file.write("\t")
+	score_file.write("l = ")
+	score_file.write(game.l)
+	score_file.write("\t")
+	score_file.write("t = ")
+	score_file.write(game.t)
+	score_file.write("\t \n")
+	score_file.write("2. Parameters of each player: \n")
+	score_file.write("Player_O: \n")
+	score_file.write("d1 = ")
+	score_file.write(game.d1)
+	score_file.write("\t")
+	if game.a == True:
+		score_file.write("a1 = alpha-beta\t")
+	elif game.a == False:
+		score_file.write("a1 = minimax\t")
+	score_file.write("heuritistic = slower_heuristic\n")
+	score_file.write("Player_O: \n")
+	score_file.write("d2 = ")
+	score_file.write(game.d2)
+	score_file.write("\t")
+	if game.a == True:
+		score_file.write("a2 = alpha-beta\t")
+	elif game.a == False:
+		score_file.write("a2 = minimax\t")
+	score_file.write("heuritistic = sophisticated_heuristic\n")
+	score_file.write("3. Number of games played: \n")
+	score_file.write(2*r)
+	score_file.write("\n")
+	score_file.write("5. Statistics for each game played \n")
+	for i in range(2*r):
+		# game.play()
+		print("placeholder")
+		#TODO: append statistics for each game played (section 2.5.1) over 2*r
+	score_file.write("4. The number and percentage of wins for each heuristic: \n")
+	score_file.write("Slower_heuristic wins and percentage = ") # This can be done after the game has finished running 2*r times, as we'll accumulate wins each time the game is played in the instance "game".
+	score_file.write(game.slower_heuristic_wins)
+	score_file.write(", ")
+	score_file.write(game.slower_heuristic_wins / (2*r))
+	score_file.write("\n")
+	score_file.write("Sophisticated_heuristic wins and percentage = ")
+	score_file.write(game.sophisticated_heuristic_wins)
+	score_file.write(", ")
+	score_file.write(game.sophisticated_heuristic_wins / (2*r))
+	score_file.write("\n")
+	score_file.close()
+
 def main():
-# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
-	g = Game(8, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 6, 6, 5, False, 3,recommend=True)
+	# g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 6, 6, 5, False, 3,recommend=True)
+	g1 = Game (4,4,3,[(0,0),(0,3),(3,0),(3,3)],6,6,5,False,4, recommend=True) #game-Trace-4435
+	g2 = Game (4,4,3,[(0,0),(0,3),(3,0),(3,3)],6,6,1,True,4, recommend=True) #game-Trace-4431
+	g3 = Game (5,4,4,[(0,1),(2,3),(3,0),(2,3)],2,6,1,True,4, recommend=True) #game-Trace-5441
+	g4 = Game (5,4,4,[(0,2),(3,2),(4,0),(4,4)],6,6,5,True,4, recommend=True) #game-Trace-5445
+	g5 = Game (8,5,5,[(5,1),(6,2),(7,0),(1,1)],2,6,1,True,4, recommend=True) #game-Trace-8551
+	g6 = Game (8,5,5,[(5,4),(6,2),(7,0),(1,1)],2,6,5,True,4, recommend=True) #game-Trace-8555
+	g7 = Game (8,6,5,[(5,4),(6,2),(7,0),(1,1)],6,6,1,True,4, recommend=True) #game-Trace-8651
+	g8 = Game (8,6,5,[(5,4),(6,2),(7,0),(1,1)],6,6,5,True,4, recommend=True) #game-Trace-8655
+	scoreboard_write(g1,5)
+	scoreboard_write(g2,5)
+	scoreboard_write(g3,5)
+	scoreboard_write(g4,5)
+	scoreboard_write(g5,5)
+	scoreboard_write(g6,5)
+	scoreboard_write(g7,5)
+	scoreboard_write(g8,5)
 	# print(blocposition_extraction(5, 1))
 	# g.draw_board()
 	# case = Test_case()
 	# print(case.slow_heuristic())	
-	g.play()
+	# g.play()
 	# g.play(algo=Game.MINIMAX,player_x=Game.AI,player_o=Game.HUMAN)
 
 if __name__ == "__main__":
