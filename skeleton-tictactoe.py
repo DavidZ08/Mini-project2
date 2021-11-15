@@ -21,44 +21,66 @@ def int_extraction(question, bound1, bound2):							#Method that will be used to
 
 def boolean_extraction(question, bound1, bound2):						#Method that will prompt the user for a boolean.
 	user_input = int_extraction(question, bound1, bound2)
-	if (user_input == 1):
+	if (user_input == 0):
 		return False
 	else:
 		return True
 
 def blocposition_extraction(board_size, bloc_number):					#Method that will prompt the user for the positions of the blocs.
+	alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'G': 6, 'H' : 7, 'I' : 8, 'J' : 9, 'K' : 10, 'L' : 11, 'M' : 12, 'B' : 13, 'O' : 14, 'P' : 15, 'Q' : 16,
+	 'R': 17, 'S': 18, 'T': 19, 'U': 20, 'V' : 21, 'W' : 22, 'X': 23, 'Y': 24, 'Z': 25}
 	coordinates_list = list()
 	x_pos = 0
 	x_pos_string = "A"
 	y_pos = 0
 	for i in range(bloc_number):
-		while not int(x_pos) in range (0, board_size):
-			while ord(x_pos_string) < ord("A") and ord(x_pos_string) > ord("K"):
-				print("Enter the x coordinate of your bloc.")
-				x_pos_string = input()
-			x_pos = coordinate_extraction(x_pos_string)
+		print("Enter the x coordinate of your bloc.")
+		x_pos_string = input()	
+		while x_pos_string not in alphabet_coordinates.keys() or not alphabet_coordinates[x_pos_string] in range(0, board_size):
+			print("Enter the x coordinate of your bloc.")
+			x_pos_string = input()	
+		print("Enter the y coordinate of your bloc.")
+		y_pos = input()
 		while not int(y_pos) in range (0, board_size):
 			print("Enter the y coordinate of your bloc.")
 			y_pos = input()
-		coordinate_tuple = (x_pos, y_pos)
+		y_pos = int(y_pos)
+		coordinate_tuple = (y_pos, x_pos)
 		coordinates_list.append(coordinate_tuple)
 	return coordinates_list
+
+def blocposition_extraction(board_size, bloc_number):					#Method that will prompt the user for the positions of the move.
+	alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'G': 6, 'H' : 7, 'I' : 8, 'J' : 9, 'K' : 10, 'L' : 11, 'M' : 12, 'B' : 13, 'O' : 14, 'P' : 15, 'Q' : 16,
+	 'R': 17, 'S': 18, 'T': 19, 'U': 20, 'V' : 21, 'W' : 22, 'X': 23, 'Y': 24, 'Z': 25}
+	x_pos = 0
+	x_pos_string = "A"
+	y_pos = 0
+	for i in range(bloc_number):
+		print("Enter the column (A... nth letter).")
+		x_pos_string = input()	
+		if x_pos_string not in alphabet_coordinates.keys() or not alphabet_coordinates[x_pos_string] in range(0, board_size):
+			print("Enter the column of your move (A... nth letter).")
+			x_pos_string = input()
+		print("Enter the row of your move (0...n-1).")
+		y_pos = input()
+		if not int(y_pos) in range (0, board_size):
+			print("Enter the row of your move (0...n-1).")
+			y_pos = input()
+		y_pos = int(y_pos)
+		coordinate_tuple = (y_pos, x_pos) 
+	return coordinate_tuple
 
 def input_extraction():																#Method that will be used to prompt the user for the various parameters needed to initiate a game.
 	n = int_extraction("Please enter the size of the board [3, 10]", 3, 10)
 	b = int_extraction("Please enter the number of blocs [2, 2*sizeofboard]", 3, 2*n)
 	s = int_extraction("Please enter the winning line-up size [3, sizeofboard]", 3, n)
-	coordinates_list = blocposition_extraction(n-1, b)
+	coordinates_list = blocposition_extraction(n, b)
 	d1 = int_extraction("Please enter the maximum depth of the adverserial search d1 [1, sizeofboard]", 1, n-1)
 	d2 = int_extraction("Please enter the maximum depth of the adverserial search d2 [1, sizeofboard]", 1, n-1)
 	t = int_extraction("Please enter the maximum allowed time for the program to return a move", 1, float('inf'))
-	a = int_extraction("To force the use of minimax, enter '0'. To force the use of alphabeta, enter '1'", 0, 1)
+	a = boolean_extraction("To force the use of minimax, enter '0'. To force the use of alphabeta, enter '1'", 0, 1)
 	play_mode = int_extraction("Please enter the game mode: 1. H-H, 2. H-AI, 3. AI-H, 4. AI-AI", 1, 4)
 	return n, b, s, coordinates_list, d1, d2, t, a, play_mode
-
-def coordinate_extraction(str):														#Method that will be used to convert alphabetical coordinates to numerical ones.
-	alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'H' : 6, 'I' : 7, 'J' : 8, 'K' : 9}
-	return alphabet_coordinates[str]
 
 class Game:
 	MINIMAX = 0
@@ -97,9 +119,15 @@ class Game:
 		print()
 		
 	def is_valid(self, px, py):
+		alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'G': 6, 'H' : 7, 'I' : 8, 'J' : 9, 'K' : 10, 'L' : 11, 'M' : 12, 'B' : 13, 'O' : 14, 'P' : 15, 'Q' : 16,
+	 		'R': 17, 'S': 18, 'T': 19, 'U': 20, 'V' : 21, 'W' : 22, 'X': 23, 'Y': 24, 'Z': 25}
+		px = alphabet_coordinates[px]
+		py = int(py)
 		if px < 0 or px > self.n-1 or py < 0 or py > self.n-1:		
+			print("This move is out of bounds!")
 			return False
 		elif self.current_state[px][py] != '.':
+			print("This position is already occupied!")
 			return False
 		else:
 			return True
@@ -228,18 +256,18 @@ class Game:
 		return self.result
 
 	def input_move(self):
+		alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'G': 6, 'H' : 7, 'I' : 8, 'J' : 9, 'K' : 10, 'L' : 11, 'M' : 12, 'B' : 13, 'O' : 14, 'P' : 15, 'Q' : 16,
+	 		'R': 17, 'S': 18, 'T': 19, 'U': 20, 'V' : 21, 'W' : 22, 'X': 23, 'Y': 24, 'Z': 25}
 		attempt_counter = 0
 		while True:
 			print(F'Player {self.player_turn}, enter your move:')
-			px = int(input('enter the x coordinate: '))
-			py = int(input('enter the y coordinate: '))
+			px = input('Enter the column (A... nth letter) of the move.')
+			py = int(input('Enter the row of your move (0...n-1) of the move.'))
 			if self.is_valid(px, py):
-				return (px,py)
+				return (py, alphabet_coordinates[px])
 			else:
-				print('The move is not valid! Try again.')
 				attempt_counter += 1
 				if attempt_counter == 2:
-					print("You have lost the game")
 					return False
 
 	def switch_player(self):
@@ -264,7 +292,7 @@ class Game:
 		y = None
 		if depth == max_depth:
 			return (self.slow_heuristic(), x, y)
-		if time.time() - start_time + 0.10 >= self.t:
+		if time.time() - start_time + 0.20 >= self.t:
 			return (self.slow_heuristic(), x, y)
 		depth += 1
 		result = self.is_end()
@@ -309,7 +337,7 @@ class Game:
 		y = None
 		if depth == max_depth:
 			return (self.slow_heuristic(), x, y)
-		if time.time() - start_time + 0.10 >= self.t:
+		if time.time() - start_time + 0.20 >= self.t:
 			return (self.slow_heuristic(), x, y)
 		depth += 1
 		result = self.is_end()
@@ -350,9 +378,8 @@ class Game:
 		return (value, x, y)
 
 	def play(self,algo=None,player_x=None,player_o=None):
-		player_x_flag = False
-		player_o_flag = False
-		if self.a == True:
+		if algo == None:
+
 			algo = self.ALPHABETA
 		elif self.a == False:
 			algo = self.MINIMAX
@@ -370,12 +397,6 @@ class Game:
 			player_o = self.AI
 		while True:
 			self.draw_board()
-			if player_x_flag == True:
-				print("Player X loses by penalty.")
-			if player_o_flag == True:
-				print("Player O loses by penalty.")
-			player_x_flag = False
-			player_o_flag = False
 			if self.check_end():
 				return
 			start = time.time()
@@ -390,27 +411,44 @@ class Game:
 				else:
 					(m, x, y) = self.alphabeta(start_time=start, max=True, max_depth=self.d1, depth=-1)
 			end = time.time()
-			if (self.player_turn == 'X' and player_x == self.HUMAN) or (self.player_turn == 'O' and player_o == self.HUMAN):
-					if self.recommend:
-						print(F'Evaluation time: {round(end - start, 7)}s')
-						print(F'Recommended move: x = {x}, y = {y}')
-					(x,y) = (0,0)
-					placeholder = self.input_move() 
-					if type(placeholder) == bool and self.player_turn == 'X' and player_x == self.HUMAN:
-						player_x_flag = True
-					elif type(placeholder) == bool and self.player_turn == 'O' and player_o == self.HUMAN:
-						player_o_flag = True
-					else: 
-						(x,y) = placeholder
+			if (self.player_turn == 'X' and player_x == self.HUMAN):
+				if self.recommend:
+					print(F'Evaluation time: {round(end - start, 7)}s')
+					print(F'Recommended move: x = {x}, y = {y}')
+				(x,y) = (0,0)
+				placeholder = self.input_move() 
+				if type(placeholder) == bool and self.player_turn == 'X':
+					print("Player X loses because of illegal move")
+					return
+				else: 
+					(x,y) = placeholder
+			if (self.player_turn == 'O' and player_o == self.HUMAN):
+				if self.recommend:
+					print(F'Evaluation time: {round(end - start, 7)}s')
+					print(F'Recommended move: x = {x}, y = {y}')
+				(x,y) = (0,0)
+				placeholder = self.input_move()
+				if type(placeholder) == bool and self.player_turn == 'O':
+					print("Player O loses because of illegal move")
+					return
+				else: 
+					(x,y) = placeholder
 			if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
 						print(F'Evaluation time: {round(end - start, 7)}s')
 						print(F'Player {self.player_turn} under AI control plays: x = {x}, y = {y}') #prints immediately for AI player.
-						if (self.is_valid(x,y) == False) and self.player_turn == 'X' and (end - start) > self.t and player_x == self.AI:
-							player_x_flag = True
-						elif (self.is_valid(x,y) == False) and self.player_turn == 'O' and (end - start) > self.t and player_o == self.AI:
-							player_o_flag = True
-						else: 
-							self.current_state[x][y] = self.player_turn
+						if self.is_valid(x,y) == False and self.player_turn == 'X':
+							print("Player X loses because of illegal move")
+							return
+						if self.player_turn == 'X' and (end - start) > self.t:
+							print("Player X loses because he exceeded the time limit")
+							return
+						if (self.is_valid(x,y) == False) and self.player_turn == 'O':
+							print("Player O loses because of illegal move")
+							return
+						if self.player_turn == 'O' and (end - start) > self.t:
+							print("Player O loses because he exceeded the time limit")
+							return
+			self.current_state[x][y] = self.player_turn
 			self.switch_player()
 
 	#Max player will always be the white pieces since that player always goes first.
@@ -521,7 +559,8 @@ class Test_case:
 		
 def main():
 	# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
-	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 10, 10, 5, True, 4,recommend=True)
+	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 6, 6, 5, False, 3,recommend=True)
+	# print(blocposition_extraction(5, 1))
 	# g.draw_board()
 	# case = Test_case()
 	# print(case.slow_heuristic())	
