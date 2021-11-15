@@ -178,7 +178,7 @@ class Game:
 		return self.result
 
 	def input_move(self):
-		alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'G': 6, 'H' : 7, 'I' : 8, 'J' : 9, 'K' : 10, 'L' : 11, 'M' : 12, 'B' : 13, 'O' : 14, 'P' : 15, 'Q' : 16,
+		alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'G': 6, 'H' : 7, 'I' : 8, 'J' : 9, 'K' : 10, 'L' : 11, 'M' : 12, 'N' : 13, 'O' : 14, 'P' : 15, 'Q' : 16,
 	 		'R': 17, 'S': 18, 'T': 19, 'U': 20, 'V' : 21, 'W' : 22, 'X': 23, 'Y': 24, 'Z': 25}
 		attempt_counter = 0
 		while True:
@@ -552,7 +552,8 @@ class Test_case:
 		
 		
 def main():
-	g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 6, 6, 5, False, 3,recommend=True)
+# n, b, s, coordinates_list, d1, d2, t, a, play_mode = input_extraction()
+	g = Game(8, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 6, 6, 5, False, 3,recommend=True)
 	# print(blocposition_extraction(5, 1))
 	# g.draw_board()
 	# case = Test_case()
