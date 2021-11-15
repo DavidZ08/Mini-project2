@@ -18,12 +18,29 @@ class Game:
 	t = 0
 	a = True
 	play_mode = 0
+
+	moves_e1=0
+	moves_e2=0
+	states_e1=0
+	states_e2=0
+	states_depth_e1=0
+	states_depth_e2=0
+	average_depth_e1=0
+	average_depth_e2=0
+
+	filename = ''
+	game_trace = ''
+
 	slow_heuristic_wins = 0
-	sophisiticated_heuristic_wins = 0
+	sophisticated_heuristic_wins = 0
 
 	def __init__(self, n, b, s, coordinates_list, d1, d2, t, a, play_mode, recommend = True):
 		self.n, self.b, self.s, self.coordinates_list, self.d1, self.d2, self.t, self.a, self.play_mode = n, b, s, coordinates_list, d1, d2, t, a, play_mode
+		self.states_depth_e1 = [0] * self.d1
+		self.states_depth_e2 = [0] * self.d2
 		self.initialize_game()
+		self.filename = 'gameTrace-{!s}{!s}{!s}{!s}.txt'.format(n, b, s, t)
+		self.game_trace = open(self.filename, "a")
 		self.recommend = recommend
 	
 	def initialize_game(self):
@@ -34,12 +51,35 @@ class Game:
 		self.player_turn = 'O'
 
 	def draw_board(self):
+		alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 		print()
+		print(file=self.game_trace)
+		print('  ', end='')
+		print('  ', end='', file=self.game_trace)
+		for i in range(0, self.n):
+			print(alphabet[i:i+1], end='')
+			print(alphabet[i:i+1], end='', file=self.game_trace)
+		print()
+		print(file=self.game_trace)
+		print(' +', end='')
+		print(' +', end='', file=self.game_trace)
+		for i in range(0, self.n):
+			print('-', end='')
+			print('-', end='', file=self.game_trace)
+		print()
+		print(file=self.game_trace)
 		for y in range(0, self.n):
+			print(y, end='')
+			print(y, end='', file=self.game_trace)
+			print('|', end='')
+			print('|', end='', file=self.game_trace)
 			for x in range(0, self.n):
 				print(F'{self.current_state[y][x]}', end="")
+				print(F'{self.current_state[y][x]}', end="", file=self.game_trace)
 			print()
+			print(file=self.game_trace)
 		print()
+		print(file=self.game_trace)
 		
 	def is_valid(self, px, py):
 		if px < 0 or px > self.n-1 or py < 0 or py > self.n-1:		
@@ -168,11 +208,14 @@ class Game:
 			if self.result == 'X':
 				self.sophisticated_heuristic_wins += 1
 				print('The winner is X!')
+				print('The winner is X!', file=self.game_trace)
 			elif self.result == 'O':
-				self.slower_heuristic_wins += 1
+				self.slow_heuristic_wins += 1
 				print('The winner is O!')
+				print('The winner is O!', file=self.game_trace)
 			elif self.result == '.':
 				print("It's a tie!")
+				print("It's a tie!", file=self.game_trace)
 			self.initialize_game()
 		return self.result
 
@@ -201,27 +244,16 @@ class Game:
 	def minimax(self, player, start_time, max_depth, depth, max=True):
 		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
-		# -1 - win for 'X'
+		# -100 - win for 'X'
 		# 0  - a tie
-		# 1  - loss for 'X'
+		# 100  - loss for 'X'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
-
+		depth += 1
 		value = 200
 		if max:
 			value = -200
 		x = None
 		y = None
-		if depth == max_depth:
-			if player == 'O':
-				return (self.slow_heuristic(), x, y)
-			else:
-				return (self.sophisticated_heuristic(), x, y)
-		if time.time() - start_time + 0.50 >= self.t:
-			if player == 'O':
-				return (self.slow_heuristic(), x, y)
-			else:
-				return (self.sophisticated_heuristic(), x, y)
-		depth += 1
 		result = self.is_end()
 		if result == 'X':
 			return (-100, x, y)
@@ -229,6 +261,24 @@ class Game:
 			return (100, x, y)
 		elif result == '.':
 			return (0, x, y)
+		if depth == max_depth:
+			if player == 'O':
+				self.states_e1 += 1
+				self.states_depth_e1[depth] += 1
+				return (self.slow_heuristic(), x, y)
+			else:
+				self.states_e2 += 1
+				self.states_depth_e2[depth] += 1
+				return (self.sophisticated_heuristic(), x, y)
+		if time.time() - start_time + (0.1*self.n) > self.t:
+			if player == 'O':
+				self.states_e1 += 1
+				self.states_depth_e1[depth] += 1
+				return (self.slow_heuristic(), x, y)
+			else:
+				self.states_e2 += 1
+				self.states_depth_e2[depth] += 1
+				return (self.sophisticated_heuristic(), x, y)
 		for i in range(0, self.n):
 			for j in range(0, self.n):
 				if self.current_state[i][j] == '.':
@@ -252,9 +302,9 @@ class Game:
 	def alphabeta(self, player, start_time, max_depth, depth, alpha=-200, beta=200, max=True):
 		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
-		# -1 - win for 'X'
+		# -100 - win for 'X'
 		# 0  - a tie
-		# 1  - loss for 'X'
+		# 100  - loss for 'X'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
 		depth += 1
 		value = 200
@@ -262,17 +312,6 @@ class Game:
 			value = -200
 		x = None
 		y = None
-		if depth == max_depth:
-			if player == 'O':
-				return (self.slow_heuristic(), x, y)
-			else:
-				return (self.sophisticated_heuristic(), x, y)
-		if time.time() - start_time + 0.50 >= self.t:
-			if player == 'O':
-				return (self.slow_heuristic(), x, y)
-			else:
-				return (self.sophisticated_heuristic(), x, y)
-		depth += 1
 		result = self.is_end()
 		if result == 'X':
 			return (-100, x, y)
@@ -280,6 +319,24 @@ class Game:
 			return (100, x, y)
 		elif result == '.':
 			return (0, x, y)
+		if depth == max_depth:
+			if player == 'O':
+				self.states_e1 += 1
+				self.states_depth_e1[depth] += 1
+				return (self.slow_heuristic(), x, y)
+			else:
+				self.states_e2 += 1
+				self.states_depth_e2[depth] += 1
+				return (self.sophisticated_heuristic(), x, y)
+		if time.time() - start_time + (0.2*self.n) > self.t:
+			if player == 'O':
+				self.states_e1 += 1
+				self.states_depth_e1[depth] += 1
+				return (self.slow_heuristic(), x, y)
+			else:
+				self.states_e2 += 1
+				self.states_depth_e2[depth] += 1
+				return (self.sophisticated_heuristic(), x, y)
 		for i in range(0, self.n):
 			for j in range(0, self.n):
 				if self.current_state[i][j] == '.':
@@ -346,39 +403,77 @@ class Game:
 			if (self.player_turn == 'X' and player_x == self.HUMAN):
 				if self.recommend:
 					print(F'Evaluation time: {round(end - start, 7)}s')
+					print(F'Evaluation time: {round(end - start, 7)}s', file=self.game_trace)
 					print(F'Recommended move: x = {x}, y = {y}')
+					print(F'Recommended move: x = {x}, y = {y}', file=self.game_trace)
 				(x,y) = (0,0)
 				placeholder = self.input_move() 
 				if type(placeholder) == bool and self.player_turn == 'X':
 					print("Player X loses because of illegal move")
+					print("Player X loses because of illegal move", file=self.game_trace)
 					return
 				else: 
 					(x,y) = placeholder
 			if (self.player_turn == 'O' and player_o == self.HUMAN):
 				if self.recommend:
-					print(F'Evaluation time: {round(end - start, 7)}s')
+					print(F'i. Evaluation time: {round(end - start, 7)}s')
+					print(F'i. Evaluation time: {round(end - start, 7)}s', file=self.game_trace)
 					print(F'Recommended move: x = {x}, y = {y}')
+					print(F'Recommended move: x = {x}, y = {y}', file=self.game_trace)
 				(x,y) = (0,0)
 				placeholder = self.input_move()
 				if type(placeholder) == bool and self.player_turn == 'O':
 					print("Player O loses because of illegal move")
+					print("Player O loses because of illegal move", file=self.game_trace)
 					return
 				else: 
 					(x,y) = placeholder
 			if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
-						print(F'Evaluation time: {round(end - start, 7)}s')
 						print(F'Player {self.player_turn} under AI control plays: x = {x}, y = {y}') #prints immediately for AI player.
+						print(F'Player {self.player_turn} under AI control plays: x = {x}, y = {y}', file=self.game_trace) #prints immediately for AI player.
+						
+						#GAME TRACE FILES OUTPUTS
+						print(F'i. Evaluation time: {round(end - start, 7)}s')
+						print(F'i. Evaluation time: {round(end - start, 7)}s', file=self.game_trace)
+						if self.player_turn == 'X':
+							print(F'ii. Heuristic evaluations: {self.states_e1}')
+							print(F'ii. Heuristic evaluations: {self.states_e1}', file=self.game_trace)
+						else:
+							print(F'ii. Heuristic evaluations: {self.states_e1}')
+							print(F'ii. Heuristic evaluations: {self.states_e2}', file=self.game_trace)
+						if self.player_turn == 'X':
+							print(F'iii. Evaluations by depth: ', end='')
+							print('{', end='')
+							for i in range(self.d1):
+								print(F'{i}: {self.states_depth_e1[i]}', end='')
+							print('}')
+						else:
+							print(F'iii. Evaluations by depth: ', end='')
+							print('{', end='')
+							for i in range(self.d2):
+								print(F'{i}: {self.states_depth_e2[i]}', end='')
+							print('}')
+						
+						
 						if self.is_valid(x,y) == False and self.player_turn == 'X':
 							print("Player X loses because of illegal move")
+							print("Player X loses because of illegal move", file=self.game_trace)
+							self.slow_heuristic_wins += 1
 							return
 						if self.player_turn == 'X' and (end - start) > self.t:
 							print("Player X loses because he exceeded the time limit")
+							print("Player X loses because he exceeded the time limit", file=self.game_trace)
+							self.slow_heuristic_wins += 1
 							return
 						if (self.is_valid(x,y) == False) and self.player_turn == 'O':
 							print("Player O loses because of illegal move")
+							print("Player O loses because of illegal move", file=self.game_trace)
+							self.sophisticated_heuristic_wins += 1
 							return
 						if self.player_turn == 'O' and (end - start) > self.t:
 							print("Player O loses because he exceeded the time limit")
+							print("Player O loses because he exceeded the time limit", file=self.game_trace)
+							self.sophisticated_heuristic_wins += 1
 							return
 			self.current_state[x][y] = self.player_turn
 			self.switch_player()
@@ -492,35 +587,78 @@ class Game:
 				avail_p2 += np.count_nonzero(diagonal_prog_ne == -1) ** 2
 
 		return avail_p1 - avail_p2
-		
+
+	def print_beginning_game_trace_info(self):
+		#1
+		self.game_trace.write("1. Parameters of the game: \n")
+		self.game_trace.write("n = ")
+		self.game_trace.write("{!s}".format(self.n))
+		self.game_trace.write("\t")
+		self.game_trace.write("b = ")
+		self.game_trace.write("{!s}".format(self.b))
+		self.game_trace.write("\t")
+		self.game_trace.write("s = ")
+		self.game_trace.write("{!s}".format(self.s))
+		self.game_trace.write("\t")
+		self.game_trace.write("t = ")
+		self.game_trace.write("{!s}".format(self.t))
+		self.game_trace.write("\t \n")
+		#2
+		self.game_trace.write("blocs={!s}".format(self.coordinates_list))
+		self.game_trace.write("\t \n")
+		self.game_trace.write("\t \n")
+		#3
+		self.game_trace.write("2. Parameters of each player: \n")
+		self.game_trace.write("Player_O: \n")
+		self.game_trace.write("d1 = ")
+		self.game_trace.write("{!s}".format(self.d1))
+		self.game_trace.write("\t")
+		if self.a == True:
+			self.game_trace.write("a1 = alpha-beta\t")
+		elif self.a == False:
+			self.game_trace.write("a1 = minimax\t")
+		self.game_trace.write("heuritistic = slower_heuristic\n")
+		self.game_trace.write("Player_X: \n")
+		self.game_trace.write("d2 = ")
+		self.game_trace.write("{!s}".format(self.d2))
+		self.game_trace.write("\t")
+		if self.a == True:
+			self.game_trace.write("a2 = alpha-beta\t")
+		elif self.a == False:
+			self.game_trace.write("a2 = minimax\t")
+		self.game_trace.write("heuritistic = sophisticated_heuristic\n")
+		#4
+		self.game_trace.write("\t \n")
+		self.game_trace.write()
+
 def scoreboard_write(game, r):
 	score_file = open("scoreboard.txt", "a")
 	score_file.write("1. Parameters of the game: \n")
 	score_file.write("n = ")
-	score_file.write(game.n)
+	score_file.write("{!s}".format(game.n))
 	score_file.write("\t")
 	score_file.write("b = ")
-	score_file.write(game.b)
+	score_file.write("{!s}".format(game.b))
 	score_file.write("\t")
-	score_file.write("l = ")
-	score_file.write(game.l)
+	score_file.write("s = ")
+	score_file.write("{!s}".format(game.s))
 	score_file.write("\t")
 	score_file.write("t = ")
-	score_file.write(game.t)
+	score_file.write("{!s}".format(game.t))
 	score_file.write("\t \n")
 	score_file.write("2. Parameters of each player: \n")
 	score_file.write("Player_O: \n")
 	score_file.write("d1 = ")
-	score_file.write(game.d1)
+	score_file.write("{!s}".format(game.d1))
 	score_file.write("\t")
 	if game.a == True:
 		score_file.write("a1 = alpha-beta\t")
 	elif game.a == False:
 		score_file.write("a1 = minimax\t")
 	score_file.write("heuritistic = slower_heuristic\n")
-	score_file.write("Player_O: \n")
+	score_file.write("Player_X: \n")
 	score_file.write("d2 = ")
-	score_file.write(game.d2)
+	score_file.write("{!s}".format(game.d2))
 	score_file.write("\t")
 	if game.a == True:
 		score_file.write("a2 = alpha-beta\t")
@@ -528,28 +666,27 @@ def scoreboard_write(game, r):
 		score_file.write("a2 = minimax\t")
 	score_file.write("heuritistic = sophisticated_heuristic\n")
 	score_file.write("3. Number of games played: \n")
-	score_file.write(2*r)
+	score_file.write("{!s}".format(2*r))
 	score_file.write("\n")
-	score_file.write("5. Statistics for each game played \n")
+	score_file.write("4. Statistics for each game played \n")
 	for i in range(2*r):
 		# game.play()
 		print("placeholder")
 		#TODO: append statistics for each game played (section 2.5.1) over 2*r
-	score_file.write("4. The number and percentage of wins for each heuristic: \n")
+	score_file.write("5. The number and percentage of wins for each heuristic: \n")
 	score_file.write("Slower_heuristic wins and percentage = ") # This can be done after the game has finished running 2*r times, as we'll accumulate wins each time the game is played in the instance "game".
-	score_file.write(game.slower_heuristic_wins)
+	score_file.write("{!s}".format(game.slow_heuristic_wins))
 	score_file.write(", ")
-	score_file.write(game.slower_heuristic_wins / (2*r))
+	score_file.write("{!s}".format(game.slow_heuristic_wins / (2*r)))
 	score_file.write("\n")
 	score_file.write("Sophisticated_heuristic wins and percentage = ")
-	score_file.write(game.sophisticated_heuristic_wins)
+	score_file.write("{!s}".format(game.sophisticated_heuristic_wins))
 	score_file.write(", ")
-	score_file.write(game.sophisticated_heuristic_wins / (2*r))
+	score_file.write("{!s}".format(game.sophisticated_heuristic_wins / (2*r)))
 	score_file.write("\n")
 	score_file.close()
 
 def main():
-	# g = Game(5, 4, 4, [(0,0),(1,3),(2,1),(3,3)], 6, 6, 5, False, 3,recommend=True)
 	g1 = Game (4,4,3,[(0,0),(0,3),(3,0),(3,3)],6,6,5,False,4, recommend=True) #game-Trace-4435
 	g2 = Game (4,4,3,[(0,0),(0,3),(3,0),(3,3)],6,6,1,True,4, recommend=True) #game-Trace-4431
 	g3 = Game (5,4,4,[(0,1),(2,3),(3,0),(2,3)],2,6,1,True,4, recommend=True) #game-Trace-5441
@@ -558,6 +695,14 @@ def main():
 	g6 = Game (8,5,5,[(5,4),(6,2),(7,0),(1,1)],2,6,5,True,4, recommend=True) #game-Trace-8555
 	g7 = Game (8,6,5,[(5,4),(6,2),(7,0),(1,1)],6,6,1,True,4, recommend=True) #game-Trace-8651
 	g8 = Game (8,6,5,[(5,4),(6,2),(7,0),(1,1)],6,6,5,True,4, recommend=True) #game-Trace-8655
+	g1.play()
+	g2.play()
+	g3.play()
+	g4.play()
+	g5.play()
+	g6.play()
+	g7.play()
+	g8.play()
 	scoreboard_write(g1,5)
 	scoreboard_write(g2,5)
 	scoreboard_write(g3,5)
@@ -566,12 +711,6 @@ def main():
 	scoreboard_write(g6,5)
 	scoreboard_write(g7,5)
 	scoreboard_write(g8,5)
-	# print(blocposition_extraction(5, 1))
-	# g.draw_board()
-	# case = Test_case()
-	# print(case.slow_heuristic())	
-	# g.play()
-	# g.play(algo=Game.MINIMAX,player_x=Game.AI,player_o=Game.HUMAN)
 
 if __name__ == "__main__":
     main()
