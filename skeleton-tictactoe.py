@@ -119,10 +119,6 @@ class Game:
 		print()
 		
 	def is_valid(self, px, py):
-		alphabet_coordinates = {'A': 0, 'B' : 1, 'C' : 2, 'D' : 3, 'E' : 4, 'F' : 5, 'G': 6, 'H' : 7, 'I' : 8, 'J' : 9, 'K' : 10, 'L' : 11, 'M' : 12, 'B' : 13, 'O' : 14, 'P' : 15, 'Q' : 16,
-	 		'R': 17, 'S': 18, 'T': 19, 'U': 20, 'V' : 21, 'W' : 22, 'X': 23, 'Y': 24, 'Z': 25}
-		px = alphabet_coordinates[px]
-		py = int(py)
 		if px < 0 or px > self.n-1 or py < 0 or py > self.n-1:		
 			print("This move is out of bounds!")
 			return False
@@ -263,7 +259,7 @@ class Game:
 			print(F'Player {self.player_turn}, enter your move:')
 			px = input('Enter the column (A... nth letter) of the move.')
 			py = int(input('Enter the row of your move (0...n-1) of the move.'))
-			if self.is_valid(px, py):
+			if self.is_valid(py, alphabet_coordinates[px]):
 				return (py, alphabet_coordinates[px])
 			else:
 				attempt_counter += 1
@@ -436,7 +432,7 @@ class Game:
 			if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
 						print(F'Evaluation time: {round(end - start, 7)}s')
 						print(F'Player {self.player_turn} under AI control plays: x = {x}, y = {y}') #prints immediately for AI player.
-						if self.is_valid(x,y) == False and self.player_turn == 'X':
+						if (self.is_valid(x,y) == False) and self.player_turn == 'X':
 							print("Player X loses because of illegal move")
 							return
 						if self.player_turn == 'X' and (end - start) > self.t:
