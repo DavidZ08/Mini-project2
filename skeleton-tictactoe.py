@@ -459,6 +459,7 @@ class Game:
 			if vertical_blocs_p2[i].all():
 				avail_p2 += 1
 				avail_p2 += np.count_nonzero(vertical_prog[i] == -1) ** 2
+
 		
 		# Iterates through the overlapping sub arrays containing the diagonal positions and calculates their total score
 		for s in range(len(diagonal_blocs_p1)):
