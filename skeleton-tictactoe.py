@@ -902,7 +902,6 @@ def main():
     g6.play()
     g7.play()
     g8.play()
-    scoreboard_write(g1, 5)
 
 
 if __name__ == "__main__":
