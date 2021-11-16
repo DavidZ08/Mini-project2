@@ -425,21 +425,21 @@ class Game:
                 for i in range(0, self.d2+1):
                     self.average_states_depth_e2[i] = self.total_states_depth_e2[i]/self.moves_e2
 
-                print("FOR E1: ")
-                print(f'Average evaluation time: {self.average_time_e1}')
-                print(f'Number of states evaluated: {self.total_states_e1}')
+                print("FOR E1: ", file=self.game_trace)
+                print(f'Average evaluation time: {self.average_time_e1}', file=self.game_trace)
+                print(f'Number of states evaluated: {self.total_states_e1}', file=self.game_trace)
                 print(
-                    f'average states per move at each depth: {self.average_states_depth_e1}')
-                print(f'total number of states: {self.total_states_depth_e1}')
-                print(f'Total number of moves: {self.moves_e1}')
+                    f'average states per move at each depth: {self.average_states_depth_e1}', file=self.game_trace)
+                print(f'total number of states: {self.total_states_depth_e1}', file=self.game_trace)
+                print(f'Total number of moves: {self.moves_e1}', file=self.game_trace)
 
                 print("FOR E2: ")
-                print(f'Average evaluation time: {self.average_time_e2}')
-                print(f'Number of states evaluated: {self.total_states_e2}')
+                print(f'Average evaluation time: {self.average_time_e2}', file=self.game_trace)
+                print(f'Number of states evaluated: {self.total_states_e2}', file=self.game_trace)
                 print(
-                    f'average states per move at each depth: {self.average_states_depth_e2}')
-                print(f'total number of states: {self.total_states_depth_e2}')
-                print(f'Total number of moves: {self.moves_e2}')
+                    f'average states per move at each depth: {self.average_states_depth_e2}', file=self.game_trace)
+                print(f'total number of states: {self.total_states_depth_e2}', file=self.game_trace)
+                print(f'Total number of moves: {self.moves_e2}', file=self.game_trace)
 
                 return
             start = time.time()
