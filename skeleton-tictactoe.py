@@ -27,8 +27,8 @@ class Game:
     average_depth_e1 = 0
     average_depth_e2 = 0
 
-    moves_e1=0
-    moves_e2=0
+    moves_e1 = 0
+    moves_e2 = 0
     average_time_e1 = 0
     average_time_e2 = 0
     total_states_e1 = 0
@@ -412,10 +412,10 @@ class Game:
                 self.average_depth_e1 = 0
                 self.ard_e1 = 0
             else:
-                self.states_e2=1
-                self.states_depth_e2= [0] * (self.d2+1)
-                self.average_depth_e2=0
-                self.ard_e2=0
+                self.states_e2 = 1
+                self.states_depth_e2 = [0] * (self.d2+1)
+                self.average_depth_e2 = 0
+                self.ard_e2 = 0
             self.draw_board()
             if self.check_end():
                 self.average_time_e1 = self.average_time_e1/self.moves_e1
@@ -424,18 +424,20 @@ class Game:
                     self.average_states_depth_e1[i] = self.total_states_depth_e1[i]/self.moves_e1
                 for i in range(0, self.d2+1):
                     self.average_states_depth_e2[i] = self.total_states_depth_e2[i]/self.moves_e2
-                
+
                 print("FOR E1: ")
                 print(f'Average evaluation time: {self.average_time_e1}')
                 print(f'Number of states evaluated: {self.total_states_e1}')
-                print(f'average states per move at each depth: {self.average_states_depth_e1}')
+                print(
+                    f'average states per move at each depth: {self.average_states_depth_e1}')
                 print(f'total number of states: {self.total_states_depth_e1}')
                 print(f'Total number of moves: {self.moves_e1}')
-                
+
                 print("FOR E2: ")
                 print(f'Average evaluation time: {self.average_time_e2}')
                 print(f'Number of states evaluated: {self.total_states_e2}')
-                print(f'average states per move at each depth: {self.average_states_depth_e2}')
+                print(
+                    f'average states per move at each depth: {self.average_states_depth_e2}')
                 print(f'total number of states: {self.total_states_depth_e2}')
                 print(f'Total number of moves: {self.moves_e2}')
 
@@ -443,20 +445,20 @@ class Game:
             start = time.time()
             if algo == self.MINIMAX:
                 if self.player_turn == 'X':
-                    self.moves_e2+=1
+                    self.moves_e2 += 1
                     (_, x, y) = self.minimax(player='X', start_time=start,
                                              max=False, max_depth=self.d2, depth=-1)
                 else:
-                    self.moves_e1+=1
+                    self.moves_e1 += 1
                     (_, x, y) = self.minimax(player='O', start_time=start,
                                              max=True, max_depth=self.d1, depth=-1)
             else:  # algo == self.ALPHABETA
                 if self.player_turn == 'X':
-                    self.moves_e2+=1
+                    self.moves_e2 += 1
                     (m, x, y) = self.alphabeta(player='X', start_time=start,
                                                max=False, max_depth=self.d2, depth=-1)
                 else:
-                    self.moves_e1+=1
+                    self.moves_e1 += 1
                     (m, x, y) = self.alphabeta(player='O', start_time=start,
                                                max=True, max_depth=self.d1, depth=-1)
             end = time.time()
@@ -599,8 +601,6 @@ class Game:
                 for i in range(self.d2+1):
                     self.total_states_depth_e2[i] += self.states_depth_e2[i]
 
-            
-
             self.current_state[x][y] = self.player_turn
             self.switch_player()
 
@@ -659,80 +659,80 @@ class Game:
         return np.sum(max_final_score_matrix) + np.sum(min_final_score_matrix)
 
     def sophisticated_heuristic(self):
-        	# Available wins for player 1 and player 2
-        	avail_p1 = avail_p2 = 0
+        # Available wins for player 1 and player 2
+        avail_p1 = avail_p2 = 0
 
-        	# Returns the board as a boolean ndarray where the true values are assigned to the empty position as well as the respective players
-        	# symbols on the board
-        	board = np.array(self.current_state)
-        	board_block = np.where(board == 'B', -2, 0)
-        	board_empty = (board == '.')
-        	board_p1 = np.where(board == 'X', 2, 0) + board_empty + board_block
-        	board_p2 = np.where(board == 'O', 2, 0) + board_empty + board_block
+        # Returns the board as a boolean ndarray where the true values are assigned to the empty position as well as the respective players
+        # symbols on the board
+        board = np.array(self.current_state)
+        board_block = np.where(board == 'B', -2, 0)
+        board_empty = (board == '.')
+        board_p1 = np.where(board == 'X', 2, 0) + board_empty + board_block
+        board_p2 = np.where(board == 'O', 2, 0) + board_empty + board_block
 
-        	# Overlapping sub arrays of the board with their lengths the size of the win conditions
-        	horizontal_blocs_p1 = np.lib.stride_tricks.sliding_window_view(
-        	    board_p1, (1, self.s)).reshape(-1, self.s)
-        	vertical_blocs_p1 = np.lib.stride_tricks.sliding_window_view(
-        	    board_p1, (self.s, 1)).reshape(-1, self.s)
-        	diagonal_blocs_p1 = np.lib.stride_tricks.sliding_window_view(
-        	    board_p1, (self.s, self.s)).reshape(-1, self.s, self.s)
-	
-        	horizontal_blocs_p2 = np.lib.stride_tricks.sliding_window_view(
-        	    board_p2, (1, self.s)).reshape(-1, self.s)
-        	vertical_blocs_p2 = np.lib.stride_tricks.sliding_window_view(
-        	    board_p2, (self.s, 1)).reshape(-1, self.s)
-        	diagonal_blocs_p2 = np.lib.stride_tricks.sliding_window_view(
-        	    board_p2, (self.s, self.s)).reshape(-1, self.s, self.s)
+        # Overlapping sub arrays of the board with their lengths the size of the win conditions
+        horizontal_blocs_p1 = np.lib.stride_tricks.sliding_window_view(
+            board_p1, (1, self.s)).reshape(-1, self.s)
+        vertical_blocs_p1 = np.lib.stride_tricks.sliding_window_view(
+            board_p1, (self.s, 1)).reshape(-1, self.s)
+        diagonal_blocs_p1 = np.lib.stride_tricks.sliding_window_view(
+            board_p1, (self.s, self.s)).reshape(-1, self.s, self.s)
 
-        	# Iterates through the overlapping sub arrays containing the vertical and horizontal positions and calculates their total score
+        horizontal_blocs_p2 = np.lib.stride_tricks.sliding_window_view(
+            board_p2, (1, self.s)).reshape(-1, self.s)
+        vertical_blocs_p2 = np.lib.stride_tricks.sliding_window_view(
+            board_p2, (self.s, 1)).reshape(-1, self.s)
+        diagonal_blocs_p2 = np.lib.stride_tricks.sliding_window_view(
+            board_p2, (self.s, self.s)).reshape(-1, self.s, self.s)
 
-        	for i in range(len(horizontal_blocs_p1)):
-            		if (horizontal_blocs_p1[i] > 0).all():
-                		avail_p1 += 1
+        # Iterates through the overlapping sub arrays containing the vertical and horizontal positions and calculates their total score
 
-            		if (vertical_blocs_p1[i] > 0).all():
-                		avail_p1 += 1
+        for i in range(len(horizontal_blocs_p1)):
+            if (horizontal_blocs_p1[i] > 0).all():
+                avail_p1 += 1
 
-            		if (horizontal_blocs_p2[i] > 0).all():
-                		avail_p2 += 1
+            if (vertical_blocs_p1[i] > 0).all():
+                avail_p1 += 1
 
-            		if (vertical_blocs_p2[i] > 0).all():
-                		avail_p2 += 1
+            if (horizontal_blocs_p2[i] > 0).all():
+                avail_p2 += 1
+
+            if (vertical_blocs_p2[i] > 0).all():
+                avail_p2 += 1
 
         # Iterates through the overlapping sub arrays containing the diagonal positions and calculates their total score
 
-        	for s in range(len(diagonal_blocs_p1)):
-            	# nw = north-west, ne = north-east
+        for s in range(len(diagonal_blocs_p1)):
+            # nw = north-west, ne = north-east
 
-            		nw_p1 = np.diagonal(diagonal_blocs_p1[s])
-            		ne_p1 = np.diagonal(np.fliplr(diagonal_blocs_p1[s]))
+            nw_p1 = np.diagonal(diagonal_blocs_p1[s])
+            ne_p1 = np.diagonal(np.fliplr(diagonal_blocs_p1[s]))
 
-            		nw_p2 = np.diagonal(diagonal_blocs_p2[s])
-            		ne_p2 = np.diagonal(np.fliplr(diagonal_blocs_p2[s]))
-            		nw_p2 = np.diagonal(diagonal_blocs_p2[s])
-            		ne_p2 = np.diagonal(np.fliplr(diagonal_blocs_p2[s]))
+            nw_p2 = np.diagonal(diagonal_blocs_p2[s])
+            ne_p2 = np.diagonal(np.fliplr(diagonal_blocs_p2[s]))
+            nw_p2 = np.diagonal(diagonal_blocs_p2[s])
+            ne_p2 = np.diagonal(np.fliplr(diagonal_blocs_p2[s]))
 
-            		diagonal_prog_nw = (nw_p1+1) - (nw_p2+1)
-            		diagonal_prog_ne = (ne_p1+1) - (ne_p2+1)
-            		
-			if (nw_p1 > 0).all():
-                		avail_p1 += 1
+            diagonal_prog_nw = (nw_p1+1) - (nw_p2+1)
+            diagonal_prog_ne = (ne_p1+1) - (ne_p2+1)
 
-            		if (ne_p1 > 0).all():
-                		avail_p1 += 1
+            if (nw_p1 > 0).all():
+                avail_p1 += 1
 
-            		if (ne_p1 > 0).all():
-                		avail_p1 += 1            
+            if (ne_p1 > 0).all():
+                avail_p1 += 1
 
-            		if (nw_p2 > 0).all():
-                		avail_p2 += 1
+            if (ne_p1 > 0).all():
+                avail_p1 += 1
 
-            		if (ne_p2 > 0).all():
-                		avail_p2 += 1
-        #Returns the subtracted totals
-        	return avail_p2 - avail_p1
-  
+            if (nw_p2 > 0).all():
+                avail_p2 += 1
+
+            if (ne_p2 > 0).all():
+                avail_p2 += 1
+        # Returns the subtracted totals
+        return avail_p2 - avail_p1
+
     def print_beginning_game_trace_info(self):
         # 1
         self.game_trace.write("1. Parameters of the game: \n")
@@ -775,7 +775,6 @@ class Game:
         # 4
         self.game_trace.write("\t \n")
         self.game_trace.write()
-
 
 
 def scoreboard_write(game, r):
@@ -869,7 +868,6 @@ def main():
     scoreboard_write(g6, 5)
     scoreboard_write(g7, 5)
     scoreboard_write(g8, 5)
-
 
 
 if __name__ == "__main__":

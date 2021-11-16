@@ -1,0 +1,76 @@
+
+  ABCD
+ +----
+0|B..B
+1|....
+2|....
+3|B..B
+
+1. Evaluation time: 4.5287101s
+Player O under AI control plays: x = 1, y = 1
+ii. Heuristic evaluations: 4519
+iii. Evaluations by depth: { depth=0:0 depth=1:11 depth=2:10 depth=3:0 depth=4:6 depth=5:0 depth=6:4491 }
+iv. Average evaluation depth: 5.9749944678026115
+
+  ABCD
+ +----
+0|B..B
+1|.O..
+2|....
+3|B..B
+
+1. Evaluation time: 4.582629s
+Player X under AI control plays: x = 1, y = 2
+ii. Heuristic evaluations: 
+1604
+iii. Evaluations by depth: {depth=0:0depth=1:10depth=2:9depth=3:3depth=4:6depth=5:1depth=6:1574}
+iv. Average evaluation depth: 5.928927680798005
+
+  ABCD
+ +----
+0|B..B
+1|.OX.
+2|....
+3|B..B
+
+1. Evaluation time: 4.5381348s
+Player O under AI control plays: x = 2, y = 1
+ii. Heuristic evaluations: 4001
+iii. Evaluations by depth: { depth=0:0 depth=1:9 depth=2:5 depth=3:2 depth=4:6 depth=5:4 depth=6:3974 }
+iv. Average evaluation depth: 5.976755811047238
+
+  ABCD
+ +----
+0|B..B
+1|.OX.
+2|.O..
+3|B..B
+
+1. Evaluation time: 4.546303s
+Player X under AI control plays: x = 2, y = 2
+ii. Heuristic evaluations: 
+1656
+iii. Evaluations by depth: {depth=0:0depth=1:8depth=2:3depth=3:2depth=4:3depth=5:1depth=6:1638}
+iv. Average evaluation depth: 5.957125603864735
+
+  ABCD
+ +----
+0|B..B
+1|.OX.
+2|.OX.
+3|B..B
+
+1. Evaluation time: 2.934607s
+Player O under AI control plays: x = 0, y = 1
+ii. Heuristic evaluations: 3313
+iii. Evaluations by depth: { depth=0:0 depth=1:0 depth=2:0 depth=3:0 depth=4:0 depth=5:0 depth=6:3312 }
+iv. Average evaluation depth: 5.998188952610927
+
+  ABCD
+ +----
+0|BO.B
+1|.OX.
+2|.OX.
+3|B..B
+
+The winner is O!
