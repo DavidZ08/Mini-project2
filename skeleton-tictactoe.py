@@ -55,6 +55,7 @@ class Game:
         self.initialize_game()
         self.filename = 'gameTrace-{!s}{!s}{!s}{!s}.txt'.format(n, b, s, t)
         self.game_trace = open(self.filename, "a")
+        self.print_beginning_game_trace_info()
         self.recommend = recommend
 
     def initialize_game(self):
@@ -426,20 +427,28 @@ class Game:
                     self.average_states_depth_e2[i] = self.total_states_depth_e2[i]/self.moves_e2
 
                 print("FOR E1: ", file=self.game_trace)
-                print(f'Average evaluation time: {self.average_time_e1}', file=self.game_trace)
-                print(f'Number of states evaluated: {self.total_states_e1}', file=self.game_trace)
+                print(
+                    f'Average evaluation time: {self.average_time_e1}', file=self.game_trace)
+                print(
+                    f'Number of states evaluated: {self.total_states_e1}', file=self.game_trace)
                 print(
                     f'average states per move at each depth: {self.average_states_depth_e1}', file=self.game_trace)
-                print(f'total number of states: {self.total_states_depth_e1}', file=self.game_trace)
-                print(f'Total number of moves: {self.moves_e1}', file=self.game_trace)
+                print(
+                    f'total number of states: {self.total_states_depth_e1}', file=self.game_trace)
+                print(
+                    f'Total number of moves: {self.moves_e1}', file=self.game_trace)
 
                 print("FOR E2: ", file=self.game_trace)
-                print(f'Average evaluation time: {self.average_time_e2}', file=self.game_trace)
-                print(f'Number of states evaluated: {self.total_states_e2}', file=self.game_trace)
+                print(
+                    f'Average evaluation time: {self.average_time_e2}', file=self.game_trace)
+                print(
+                    f'Number of states evaluated: {self.total_states_e2}', file=self.game_trace)
                 print(
                     f'average states per move at each depth: {self.average_states_depth_e2}', file=self.game_trace)
-                print(f'total number of states: {self.total_states_depth_e2}', file=self.game_trace)
-                print(f'Total number of moves: {self.moves_e2}', file=self.game_trace)
+                print(
+                    f'total number of states: {self.total_states_depth_e2}', file=self.game_trace)
+                print(
+                    f'Total number of moves: {self.moves_e2}', file=self.game_trace)
 
                 return
             start = time.time()
@@ -762,7 +771,7 @@ class Game:
             self.game_trace.write("a1 = alpha-beta\t")
         elif self.a == False:
             self.game_trace.write("a1 = minimax\t")
-        self.game_trace.write("heuritistic = slower_heuristic\n")
+        self.game_trace.write("\nheuritistic = slower_heuristic\n")
         self.game_trace.write("Player_X: \n")
         self.game_trace.write("d2 = ")
         self.game_trace.write("{!s}".format(self.d2))
@@ -771,10 +780,9 @@ class Game:
             self.game_trace.write("a2 = alpha-beta\t")
         elif self.a == False:
             self.game_trace.write("a2 = minimax\t")
-        self.game_trace.write("heuritistic = sophisticated_heuristic\n")
+        self.game_trace.write("\nheuritistic = sophisticated_heuristic\n")
         # 4
         self.game_trace.write("\t \n")
-        self.game_trace.write()
 
 
 def scoreboard_write(game, r):
@@ -801,7 +809,7 @@ def scoreboard_write(game, r):
         score_file.write("a1 = alpha-beta\t")
     elif game.a == False:
         score_file.write("a1 = minimax\t")
-    score_file.write("heuritistic = slower_heuristic\n")
+    score_file.write("\nheuritistic = slower_heuristic\n")
     score_file.write("Player_X: \n")
     score_file.write("d2 = ")
     score_file.write("{!s}".format(game.d2))
@@ -810,18 +818,52 @@ def scoreboard_write(game, r):
         score_file.write("a2 = alpha-beta\t")
     elif game.a == False:
         score_file.write("a2 = minimax\t")
-    score_file.write("heuritistic = sophisticated_heuristic\n")
+    score_file.write("\nheuritistic = sophisticated_heuristic\n")
     score_file.write("3. Number of games played: \n")
     score_file.write("{!s}".format(2*r))
     score_file.write("\n")
     score_file.write("4. Statistics for each game played \n")
     for i in range(2*r):
-        # game.play()
-        print("placeholder")
-        # TODO: append statistics for each game played (section 2.5.1) over 2*r
+        g1 = Game(4, 4, 3, [(0, 0), (0, 3), (3, 0), (3, 3)], 5,
+                  6, 5, False, 4, recommend=True)  # game-Trace-4435
+        g2 = Game(4, 4, 3, [(0, 0), (0, 3), (3, 0), (3, 3)], 6,
+                  5, 5, False, 4, recommend=True)  # game-Trace-4435
+        g1.play()
+        g2.play()
+        moves_e1 = 0
+        moves_e2 = 0
+        average_time_e1 = 0
+        average_time_e2 = 0
+        total_states_e1 = 0
+        total_states_e2 = 0
+        total_states_depth_e1 = 0
+        total_states_depth_e2 = 0
     score_file.write(
         "5. The number and percentage of wins for each heuristic: \n")
     # This can be done after the game has finished running 2*r times, as we'll accumulate wins each time the game is played in the instance "game".
+    print("FOR E1: ", file=score_file)
+    print(
+        f'Average evaluation time: {average_time_e1}', file=score_file)
+    print(
+        f'Number of states evaluated: {total_states_e1}', file=score_file)
+    print(
+        f'average states per move at each depth: ', file=score_file)
+    print(
+        f'total number of states: {total_states_depth_e1}', file=score_file)
+    print(
+        f'Total number of moves: {moves_e1}', file=score_file)
+
+    print("FOR E2: ", file=score_file)
+    print(
+        f'Average evaluation time: {average_time_e2}', file=score_file)
+    print(
+        f'Number of states evaluated: {total_states_e2}', file=score_file)
+    print(
+        f'average states per move at each depth: ', file=score_file)
+    print(
+        f'total number of states: {total_states_depth_e2}', file=score_file)
+    print(
+        f'Total number of moves: {moves_e2}', file=score_file)
     score_file.write("Slower_heuristic wins and percentage = ")
     score_file.write("{!s}".format(game.slow_heuristic_wins))
     score_file.write(", ")
@@ -861,13 +903,6 @@ def main():
     g7.play()
     g8.play()
     scoreboard_write(g1, 5)
-    scoreboard_write(g2, 5)
-    scoreboard_write(g3, 5)
-    scoreboard_write(g4, 5)
-    scoreboard_write(g5, 5)
-    scoreboard_write(g6, 5)
-    scoreboard_write(g7, 5)
-    scoreboard_write(g8, 5)
 
 
 if __name__ == "__main__":
