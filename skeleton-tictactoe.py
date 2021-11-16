@@ -433,7 +433,7 @@ class Game:
                 print(f'total number of states: {self.total_states_depth_e1}', file=self.game_trace)
                 print(f'Total number of moves: {self.moves_e1}', file=self.game_trace)
 
-                print("FOR E2: ")
+                print("FOR E2: ", file=self.game_trace)
                 print(f'Average evaluation time: {self.average_time_e2}', file=self.game_trace)
                 print(f'Number of states evaluated: {self.total_states_e2}', file=self.game_trace)
                 print(
