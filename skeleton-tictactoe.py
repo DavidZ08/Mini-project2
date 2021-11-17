@@ -800,7 +800,7 @@ def scoreboard_write(game, r):
     score_file.write("t = ")
     score_file.write("{!s}".format(game.t))
     score_file.write("\t \n")
-    score_file.write("2. Parameters of each player: \n")
+    score_file.write("\n2. Parameters of each player: \n")
     score_file.write("Player_O: \n")
     score_file.write("d1 = ")
     score_file.write("{!s}".format(game.d1))
@@ -819,29 +819,64 @@ def scoreboard_write(game, r):
     elif game.a == False:
         score_file.write("a2 = minimax\t")
     score_file.write("\nheuritistic = sophisticated_heuristic\n")
-    score_file.write("3. Number of games played: \n")
+    score_file.write("\n3. Number of games played: \n")
     score_file.write("{!s}".format(2*r))
     score_file.write("\n")
-    score_file.write("4. Statistics for each game played \n")
-    for i in range(2*r):
-        g1 = Game(4, 4, 3, [(0, 0), (0, 3), (3, 0), (3, 3)], 5,
-                  6, 5, False, 4, recommend=True)  # game-Trace-4435
-        g2 = Game(4, 4, 3, [(0, 0), (0, 3), (3, 0), (3, 3)], 6,
-                  5, 5, False, 4, recommend=True)  # game-Trace-4435
+    score_file.write("\n4. Statistics for each game played \n")
+    moves_e1 = 0
+    moves_e2 = 0
+    average_time_e1 = 0
+    average_time_e2 = 0
+    total_states_e1 = 0
+    total_states_e2 = 0
+    total_states_depth_e1 = [0] * (game.d1+1)
+    total_states_depth_e2 = [0] * (game.d1+1)
+    slow_heuristic_wins = 0
+    sophisticated_heuristic_wins = 0
+
+    for i in range(r):
+        g1 = Game(game.n, game.b, game.s, game.coordinates_list, game.d1,
+                  game.d2, game.t, game.a, 4, recommend=True)  # game-Trace-4435
         g1.play()
+        g2 = Game(game.n, game.b, game.s, game.coordinates_list, game.d2,
+                  game.d1, game.t, game.a, 4, recommend=True)  # game-Trace-4435
         g2.play()
-        moves_e1 = 0
-        moves_e2 = 0
-        average_time_e1 = 0
-        average_time_e2 = 0
-        total_states_e1 = 0
-        total_states_e2 = 0
-        total_states_depth_e1 = 0
-        total_states_depth_e2 = 0
-    score_file.write(
-        "5. The number and percentage of wins for each heuristic: \n")
-    # This can be done after the game has finished running 2*r times, as we'll accumulate wins each time the game is played in the instance "game".
-    print("FOR E1: ", file=score_file)
+        moves_e1 += g1.moves_e1
+        moves_e2 += g2.moves_e2
+        average_time_e1 += g1.average_time_e1
+        average_time_e2 += g2.average_time_e2
+        total_states_e1 += g1.total_states_e1
+        total_states_e2 += g2.total_states_e2
+        total_states_depth_e1 = np.add(
+            total_states_depth_e1, g1.total_states_depth_e1)
+        total_states_depth_e2 = np.add(
+            total_states_depth_e2, g2.total_states_depth_e2)
+        slow_heuristic_wins += g1.slow_heuristic_wins
+        sophisticated_heuristic_wins += g2.sophisticated_heuristic_wins
+
+    moves_e1 = g1.moves_e1 / (2*r)
+    moves_e2 = g2.moves_e2 / (2*r)
+    average_time_e1 = g1.average_time_e1 / (2*r)
+    average_time_e2 = g2.average_time_e2 / (2*r)
+    total_states_e1 = g1.total_states_e1 / (2*r)
+    total_states_e2 = g2.total_states_e2 / (2*r)
+    total_states_depth_e1 = np.add(
+        total_states_depth_e1, g1.total_states_depth_e1) / (2*r)
+    total_states_depth_e2 = np.add(
+        total_states_depth_e2, g2.total_states_depth_e2) / (2*r)
+
+    score_file.write("Slower_heuristic wins and percentage = ")
+    score_file.write("{!s}".format(slow_heuristic_wins))
+    score_file.write(", ")
+    score_file.write("{!s}".format(slow_heuristic_wins / (2*r)))
+    score_file.write("\n")
+    score_file.write("Sophisticated_heuristic wins and percentage = ")
+    score_file.write("{!s}".format(sophisticated_heuristic_wins))
+    score_file.write(", ")
+    score_file.write("{!s}".format(sophisticated_heuristic_wins / (2*r)))
+    score_file.write("\n")
+
+    print("\nFOR E1: ", file=score_file)
     print(
         f'Average evaluation time: {average_time_e1}', file=score_file)
     print(
@@ -864,44 +899,37 @@ def scoreboard_write(game, r):
         f'total number of states: {total_states_depth_e2}', file=score_file)
     print(
         f'Total number of moves: {moves_e2}', file=score_file)
-    score_file.write("Slower_heuristic wins and percentage = ")
-    score_file.write("{!s}".format(game.slow_heuristic_wins))
-    score_file.write(", ")
-    score_file.write("{!s}".format(game.slow_heuristic_wins / (2*r)))
-    score_file.write("\n")
-    score_file.write("Sophisticated_heuristic wins and percentage = ")
-    score_file.write("{!s}".format(game.sophisticated_heuristic_wins))
-    score_file.write(", ")
-    score_file.write("{!s}".format(game.sophisticated_heuristic_wins / (2*r)))
-    score_file.write("\n")
     score_file.close()
 
 
 def main():
-    g1 = Game(4, 4, 3, [(0, 0), (0, 3), (3, 0), (3, 3)], 6,
-              6, 5, False, 4, recommend=True)  # game-Trace-4435
-    g2 = Game(4, 4, 3, [(0, 0), (0, 3), (3, 0), (3, 3)], 6,
-              6, 1, True, 4, recommend=True)  # game-Trace-4431
-    g3 = Game(5, 4, 4, [(0, 1), (2, 3), (3, 0), (2, 3)], 2,
-              6, 1, True, 4, recommend=True)  # game-Trace-5441
-    g4 = Game(5, 4, 4, [(0, 2), (3, 2), (4, 0), (4, 4)], 6,
-              6, 5, True, 4, recommend=True)  # game-Trace-5445
-    g5 = Game(8, 5, 5, [(5, 1), (6, 2), (7, 0), (1, 1)], 2,
-              6, 1, True, 4, recommend=True)  # game-Trace-8551
-    g6 = Game(8, 5, 5, [(5, 4), (6, 2), (7, 0), (1, 1)], 2,
-              6, 5, True, 4, recommend=True)  # game-Trace-8555
-    g7 = Game(8, 6, 5, [(5, 4), (6, 2), (7, 0), (1, 1)], 6,
-              6, 1, True, 4, recommend=True)  # game-Trace-8651
-    g8 = Game(8, 6, 5, [(5, 4), (6, 2), (7, 0), (1, 1)], 6,
-              6, 5, True, 4, recommend=True)  # game-Trace-8655
-    g1.play()
-    g2.play()
-    g3.play()
-    g4.play()
-    g5.play()
-    g6.play()
-    g7.play()
-    g8.play()
+    # g1 = Game(4, 4, 3, [(0, 0), (0, 3), (3, 0), (3, 3)], 6,
+    #           6, 5, False, 4, recommend=True)  # game-Trace-4435
+    # g2 = Game(4, 4, 3, [(0, 0), (0, 3), (3, 0), (3, 3)], 6,
+    #           6, 1, True, 4, recommend=True)  # game-Trace-4431
+    # g3 = Game(5, 4, 4, [(0, 1), (2, 3), (3, 0), (2, 3)], 2,
+    #           6, 1, True, 4, recommend=True)  # game-Trace-5441
+    # g4 = Game(5, 4, 4, [(0, 2), (3, 2), (4, 0), (4, 4)], 6,
+    #           6, 5, True, 4, recommend=True)  # game-Trace-5445
+    # g5 = Game(8, 5, 5, [(5, 1), (6, 2), (7, 0), (1, 1)], 2,
+    #           6, 1, True, 4, recommend=True)  # game-Trace-8551
+    # g6 = Game(8, 5, 5, [(5, 4), (6, 2), (7, 0), (1, 1)], 2,
+    #           6, 5, True, 4, recommend=True)  # game-Trace-8555
+    # g7 = Game(8, 6, 5, [(5, 4), (6, 2), (7, 0), (1, 1)], 6,
+    #           6, 1, True, 4, recommend=True)  # game-Trace-8651
+    # g8 = Game(8, 6, 5, [(5, 4), (6, 2), (7, 0), (1, 1)], 6,
+    #           6, 5, True, 4, recommend=True)  # game-Trace-8655
+    # g1.play()
+    # g2.play()
+    # g3.play()
+    # g4.play()
+    # g5.play()
+    # g6.play()
+    # g7.play()
+    # g8.play()
+    g1 = Game(6, 1, 3, [(1, 1)], 3, 6, 6, False,
+              4, recommend=True)  # game-Trace-4435
+    scoreboard_write(g1, 3)
 
 
 if __name__ == "__main__":

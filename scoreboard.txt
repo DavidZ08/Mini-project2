@@ -1,0 +1,30 @@
+1. Parameters of the game: 
+n = 6	b = 1	s = 3	t = 6	 
+
+2. Parameters of each player: 
+Player_O: 
+d1 = 3	a1 = minimax	
+heuritistic = slower_heuristic
+Player_X: 
+d2 = 6	a2 = minimax	
+heuritistic = sophisticated_heuristic
+
+3. Number of games played: 
+6
+
+4. Statistics for each game played 
+Slower_heuristic wins and percentage = 3, 0.5
+Sophisticated_heuristic wins and percentage = 0, 0.0
+
+FOR E1: 
+Average evaluation time: 0.9313587
+Number of states evaluated: 550.5
+average states per move at each depth: 
+total number of states: [   0.           21.33333333    4.66666667 2090.        ]
+Total number of moves: 0.16666666666666666
+FOR E2: 
+Average evaluation time: 0.0
+Number of states evaluated: 320.8333333333333
+average states per move at each depth: 
+total number of states: [   0.           42.33333333   13.16666667 1172.        ]
+Total number of moves: 0.3333333333333333
